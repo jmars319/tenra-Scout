@@ -183,6 +183,16 @@ Desktop shells automatically set:
 That allows blocked DuckDuckGo HTML runs to open a local browser-backed confirmation window without widening the web product surface. Google remains fetch-only.
 Desktop startup also prunes cache-heavy folders inside that profile at most once per 24 hours so `.local` does not grow indefinitely while cookies and session storage stay intact.
 
+## Local Tooling
+
+The shared local machine baseline includes a few tools that are useful in this repo:
+
+- Use `actionlint` before changing GitHub Actions workflows.
+- Use `shellcheck` and `shfmt` when editing release, package, or verification shell scripts.
+- Use `osv-scanner` for dependency advisory checks across package manifests before release work.
+- Use `pa11y` and `lighthouse` against the running Next.js surface when UI or accessibility behavior changes.
+- Use OrbStack/Docker only when local service parity is needed; the normal Scout verification path still expects local Postgres and the repo scripts above.
+
 ## Desktop And Mobile Surfaces
 
 - `pnpm run dev:desktop`

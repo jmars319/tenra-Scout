@@ -105,6 +105,7 @@ export async function POST(request: Request, { params }: Params) {
       });
     }
 
+    const responseBody = (await response.json().catch(() => ({}))) as unknown;
     const record = await recordScoutHandoffDelivery({
       runId,
       candidateId,
@@ -118,7 +119,7 @@ export async function POST(request: Request, { params }: Params) {
       ok: true,
       delivered: true,
       deliveryMode: "direct-post",
-      response: await response.json().catch(() => ({})),
+      response: responseBody,
       handoffHistory: record?.persistence.handoffHistory ?? []
     });
   } catch (error) {

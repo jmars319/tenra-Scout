@@ -65,6 +65,17 @@ const suiteEndpointPresets: ScoutEndpointConfig = {
   guardrail: "http://localhost:5174/api/external-reviews"
 };
 
+function isEndpointConfig(value: unknown): value is Partial<ScoutEndpointConfig> {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  return (["assembly", "proxy", "guardrail"] as const).every((target) => {
+    const endpoint = (value as Partial<Record<HandoffTarget, unknown>>)[target];
+    return endpoint === undefined || typeof endpoint === "string";
+  });
+}
+
 function readEndpointConfig(): ScoutEndpointConfig {
   if (typeof window === "undefined") {
     return defaultEndpointConfig;
@@ -72,7 +83,8 @@ function readEndpointConfig(): ScoutEndpointConfig {
 
   try {
     const raw = window.localStorage.getItem(endpointStorageKey);
-    return { ...defaultEndpointConfig, ...(raw ? JSON.parse(raw) : {}) };
+    const parsed: unknown = raw ? JSON.parse(raw) : {};
+    return { ...defaultEndpointConfig, ...(isEndpointConfig(parsed) ? parsed : {}) };
   } catch {
     return defaultEndpointConfig;
   }

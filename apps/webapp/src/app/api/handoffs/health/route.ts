@@ -8,7 +8,7 @@ const targetEnv: Record<HandoffTarget, string | undefined> = {
   guardrail: process.env.SCOUT_GUARDRAIL_REVIEW_URL
 };
 
-async function checkEndpoint(target: HandoffTarget, endpoint?: string | undefined) {
+async function checkEndpoint(target: HandoffTarget, endpoint?: string) {
   const url = endpoint?.trim() || targetEnv[target];
   if (!url) {
     return {

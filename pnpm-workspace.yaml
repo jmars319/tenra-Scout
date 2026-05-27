@@ -2,6 +2,7 @@ packages:
   - apps/*
   - packages/*
 overrides:
+  tmp: 0.2.6
   '@xmldom/xmldom@<0.8.13': '>=0.8.13'
   brace-expansion@<1.1.13: 1.1.14
   brace-expansion@>=4.0.0 <5.0.5: 5.0.6

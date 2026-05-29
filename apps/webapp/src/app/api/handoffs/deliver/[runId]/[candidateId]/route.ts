@@ -4,6 +4,7 @@ import {
   getScoutRun,
   recordScoutHandoffDelivery
 } from "../../../../../../lib/server/scout-runner.ts";
+import { buildProxyHandoffReceipt } from "../../../../../../lib/server/handoffs/proxy-receipts.ts";
 
 interface Params {
   params: Promise<{
@@ -106,6 +107,15 @@ export async function POST(request: Request, { params }: Params) {
     }
 
     const responseBody = (await response.json().catch(() => ({}))) as unknown;
+    const proxyReceipt =
+      target === "proxy"
+        ? buildProxyHandoffReceipt({
+            endpoint,
+            responseBody,
+            responseStatus: response.status,
+            traceId
+          })
+        : undefined;
     const record = await recordScoutHandoffDelivery({
       runId,
       candidateId,
@@ -113,7 +123,8 @@ export async function POST(request: Request, { params }: Params) {
       mode: "direct-post",
       endpoint,
       traceId,
-      status: "ok"
+      status: "ok",
+      ...(proxyReceipt ? { proxyReceipt } : {})
     });
     return NextResponse.json({
       ok: true,

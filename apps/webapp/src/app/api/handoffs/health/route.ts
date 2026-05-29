@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { healthEndpointForProxyShapeEndpoint } from "../../../../lib/server/handoffs/proxy-receipts.ts";
+
 type HandoffTarget = "assembly" | "proxy" | "guardrail";
 
 const targetEnv: Record<HandoffTarget, string | undefined> = {
@@ -18,17 +20,19 @@ async function checkEndpoint(target: HandoffTarget, endpoint?: string) {
       message: "No endpoint configured."
     };
   }
+  const healthEndpoint = target === "proxy" ? healthEndpointForProxyShapeEndpoint(url) : url;
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 3500);
   try {
-    const response = await fetch(url, {
+    const response = await fetch(healthEndpoint, {
       method: "GET",
       signal: controller.signal
     });
     return {
       target,
       endpoint: url,
+      ...(healthEndpoint !== url ? { healthEndpoint } : {}),
       ok: response.ok,
       status: response.status,
       message: response.statusText || (response.ok ? "OK" : "Endpoint returned an error.")
@@ -37,6 +41,7 @@ async function checkEndpoint(target: HandoffTarget, endpoint?: string) {
     return {
       target,
       endpoint: url,
+      ...(healthEndpoint !== url ? { healthEndpoint } : {}),
       ok: false,
       status: "failed",
       message: error instanceof Error ? error.message : "Endpoint health check failed."

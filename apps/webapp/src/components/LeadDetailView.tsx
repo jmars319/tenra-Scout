@@ -13,9 +13,11 @@ import type {
   LeadInboxItem,
   LeadStatus,
   OutreachDraft,
+  ScoutProxyHandoffReceipt,
   SearchCandidate
 } from "@scout/domain";
 import { Tag } from "@scout/ui";
+import { describeProxyReceipt } from "../lib/handoffs/proxy-receipt-copy";
 
 import {
   formatLeadUpdatedAt,
@@ -38,6 +40,7 @@ type HandoffHealthResult = {
   target: HandoffTarget;
   ok: boolean;
   endpoint?: string;
+  healthEndpoint?: string;
   status: string | number;
   message: string;
 };
@@ -92,6 +95,36 @@ function readEndpointConfig(): ScoutEndpointConfig {
 
 function writeEndpointConfig(config: ScoutEndpointConfig) {
   window.localStorage.setItem(endpointStorageKey, JSON.stringify(config));
+}
+
+function endpointLabel(endpoint: string): string {
+  try {
+    const url = new URL(endpoint);
+    return url.pathname;
+  } catch {
+    return endpoint;
+  }
+}
+
+function ProxyReceiptSummary({ receipt }: { receipt: ScoutProxyHandoffReceipt | undefined }) {
+  if (!receipt) {
+    return null;
+  }
+
+  return (
+    <div className="lead-receipt-summary">
+      <div className="tag-row">
+        {describeProxyReceipt(receipt).map((line) => (
+          <Tag key={line} tone={receipt.validationResult === "invalid" ? "warn" : "neutral"}>
+            {line}
+          </Tag>
+        ))}
+      </div>
+      {receipt.shapedOutputPreview ? (
+        <p className="muted">Preview: {receipt.shapedOutputPreview}</p>
+      ) : null}
+    </div>
+  );
 }
 
 function isClosed(state: LeadStatus): boolean {
@@ -567,6 +600,9 @@ export function LeadDetailView({
               {endpointHealth.map((result) => (
                 <Tag key={result.target} tone={result.ok ? "good" : result.status === "not-configured" ? "warn" : "danger"}>
                   {result.target}: {result.ok ? "ok" : String(result.status)}
+                  {result.healthEndpoint && result.healthEndpoint !== result.endpoint
+                    ? ` · health ${endpointLabel(result.healthEndpoint)}`
+                    : ""}
                 </Tag>
               ))}
             </div>
@@ -588,6 +624,7 @@ export function LeadDetailView({
                     {entry.endpoint ? ` · ${entry.endpoint}` : ""}
                     {entry.message ? ` · ${entry.message.slice(0, 120)}` : ""}
                   </div>
+                  <ProxyReceiptSummary receipt={entry.proxyReceipt} />
                   <div className="lead-detail-actions">
                     <button
                       className="secondary-button"

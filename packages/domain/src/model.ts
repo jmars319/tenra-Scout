@@ -306,6 +306,16 @@ export interface LeadOutreachSummary {
   draftUpdatedAt?: string | undefined;
 }
 
+export interface ScoutProxyHandoffReceipt {
+  responseStatus: number;
+  validationResult: "valid" | "invalid" | "unknown";
+  validationValid?: boolean | undefined;
+  guardrailRecommended?: boolean | undefined;
+  traceId: string;
+  endpoint: string;
+  shapedOutputPreview?: string | undefined;
+}
+
 export interface ScoutHandoffHistoryEntry {
   exportedAt: string;
   candidateId: string;
@@ -315,6 +325,7 @@ export interface ScoutHandoffHistoryEntry {
   traceId: string;
   status: "ok" | "failed";
   message?: string | undefined;
+  proxyReceipt?: ScoutProxyHandoffReceipt | undefined;
 }
 
 export interface LeadInboxItem {

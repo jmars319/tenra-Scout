@@ -190,6 +190,28 @@ export const leadOutreachSummarySchema = z.object({
   draftUpdatedAt: z.iso.datetime().optional()
 });
 
+export const scoutProxyHandoffReceiptSchema = z.object({
+  responseStatus: z.number().int().positive(),
+  validationResult: z.enum(["valid", "invalid", "unknown"]),
+  validationValid: z.boolean().optional(),
+  guardrailRecommended: z.boolean().optional(),
+  traceId: z.string().min(1),
+  endpoint: z.string().min(1),
+  shapedOutputPreview: z.string().optional()
+});
+
+export const scoutHandoffHistoryEntrySchema = z.object({
+  exportedAt: z.iso.datetime(),
+  candidateId: z.string().min(1),
+  target: z.enum(["assembly", "proxy", "guardrail"]),
+  mode: z.enum(["download", "direct-post", "json-fallback", "decision-return"]),
+  endpoint: z.string().optional(),
+  traceId: z.string().min(1),
+  status: z.enum(["ok", "failed"]),
+  message: z.string().optional(),
+  proxyReceipt: scoutProxyHandoffReceiptSchema.optional()
+});
+
 export const leadInboxItemSchema = z.object({
   runId: z.string(),
   runCreatedAt: z.iso.datetime(),
@@ -211,18 +233,7 @@ export const leadInboxItemSchema = z.object({
   highSeverityFindings: z.number().int().nonnegative(),
   topIssues: z.array(z.enum(auditIssueTypes)),
   reasons: z.array(z.string()),
-  handoffHistory: z.array(
-    z.object({
-      exportedAt: z.iso.datetime(),
-      candidateId: z.string().min(1),
-      target: z.enum(["assembly", "proxy", "guardrail"]),
-      mode: z.enum(["download", "direct-post", "json-fallback", "decision-return"]),
-      endpoint: z.string().optional(),
-      traceId: z.string().min(1),
-      status: z.enum(["ok", "failed"]),
-      message: z.string().optional()
-    })
-  ).default([]),
+  handoffHistory: z.array(scoutHandoffHistoryEntrySchema).default([]),
   outreach: leadOutreachSummarySchema,
   annotation: leadAnnotationSchema
 });
@@ -340,18 +351,7 @@ export const persistenceMetadataSchema = z.object({
   importedFromLegacyLocal: z.boolean(),
   importSourcePath: z.string().optional(),
   importedAt: z.iso.datetime().optional(),
-  handoffHistory: z.array(
-    z.object({
-      exportedAt: z.iso.datetime(),
-      candidateId: z.string().min(1),
-      target: z.enum(["assembly", "proxy", "guardrail"]),
-      mode: z.enum(["download", "direct-post", "json-fallback", "decision-return"]),
-      endpoint: z.string().optional(),
-      traceId: z.string().min(1),
-      status: z.enum(["ok", "failed"]),
-      message: z.string().optional()
-    })
-  ).default([])
+  handoffHistory: z.array(scoutHandoffHistoryEntrySchema).default([])
 });
 
 export const runExecutionSchema = z.object({

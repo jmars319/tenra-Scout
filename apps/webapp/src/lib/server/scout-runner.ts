@@ -1,6 +1,7 @@
 import {
   resolveMarketIntent,
   type ScoutQueryInput,
+  type ScoutProxyHandoffReceipt,
   type ScoutRunReport
 } from "@scout/domain";
 
@@ -20,6 +21,7 @@ export interface ScoutHandoffHistoryInput {
   traceId: string;
   status: "ok" | "failed";
   message?: string | undefined;
+  proxyReceipt?: ScoutProxyHandoffReceipt | undefined;
 }
 
 function slugify(value: string): string {
@@ -79,7 +81,8 @@ export async function recordScoutHandoffDelivery(input: ScoutHandoffHistoryInput
           ...(input.endpoint ? { endpoint: input.endpoint } : {}),
           traceId: input.traceId,
           status: input.status,
-          ...(input.message ? { message: input.message } : {})
+          ...(input.message ? { message: input.message } : {}),
+          ...(input.proxyReceipt ? { proxyReceipt: input.proxyReceipt } : {})
         },
         ...record.persistence.handoffHistory
       ].slice(0, 100)

@@ -44,7 +44,7 @@
     "verify:persistence": "node --no-warnings --experimental-strip-types --experimental-specifier-resolution=node ./scripts/verify-persistence.ts",
     "verify:queue": "node --no-warnings --experimental-strip-types --experimental-specifier-resolution=node ./scripts/verify-queue.ts",
     "verify:run-controls": "node --no-warnings --experimental-strip-types --experimental-specifier-resolution=node ./scripts/verify-run-controls.ts",
-    "verify:handoffs": "node ./scripts/validate-handoffs.mjs",
+    "verify:handoffs": "node ./scripts/validate-handoffs.mjs && node --no-warnings --experimental-strip-types --experimental-specifier-resolution=node ./scripts/verify-handoff-receipts.ts",
     "verify:http-smoke": "node --no-warnings --experimental-strip-types --experimental-specifier-resolution=node ./scripts/verify-http-smoke.ts",
     "verify:ui-smoke": "pnpm run verify:http-smoke",
     "verify:web": "pnpm run lint && pnpm run typecheck && pnpm run verify:acquisition && pnpm run verify:providers && pnpm run verify:candidates && pnpm run verify:comparison && pnpm run verify:leads && pnpm run verify:outreach && pnpm run verify:persistence && pnpm run verify:queue && pnpm run verify:run-controls && pnpm run build:web",

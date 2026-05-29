@@ -14,8 +14,10 @@ import {
 } from "../apps/webapp/src/lib/server/leads/lead-inbox-actions.ts";
 import {
   filterLeadInboxItems,
+  getLeadInboxItem,
   listLeadInboxItems
 } from "../apps/webapp/src/lib/server/leads/lead-inbox-service.ts";
+import { createManualLead } from "../apps/webapp/src/lib/server/leads/manual-leads.ts";
 import {
   getLeadAnnotations,
   saveLeadAnnotation
@@ -35,6 +37,7 @@ const runId = `verify-leads-${createdAt.toISOString().replace(/[:.]/g, "-")}`;
 const secondRunId = `verify-leads-cross-run-${createdAt.toISOString().replace(/[:.]/g, "-")}`;
 const candidateId = "lead-workflow-candidate";
 const secondCandidateId = "lead-workflow-second-candidate";
+let manualRunId = "";
 const query = {
   rawQuery: "lead workflow verification shop in Winston-Salem, NC"
 };
@@ -390,6 +393,24 @@ try {
   assert(
     inboxItems.some((item) => item.runId === secondRunId && item.candidateId === secondCandidateId)
   );
+
+  const manualLead = await createManualLead({
+    market: "manual lead workflow verification in Winston-Salem, NC",
+    businessName: "Operator Entered Verification Shop",
+    primaryUrl: "https://operator-entered.example",
+    notes: "Known operator-entered lead for manual fallback verification.",
+    contactEmail: "owner@operator-entered.example"
+  });
+  manualRunId = manualLead.runId;
+  assert.match(manualLead.runId, /^manual-/);
+  assert.match(manualLead.candidateId, /^operator-entered-/);
+  assert.equal(manualLead.item?.businessName, "Operator Entered Verification Shop");
+
+  const manualInboxItem = await getLeadInboxItem(manualLead.runId, manualLead.candidateId);
+  assert.equal(manualInboxItem?.annotation.state, "needs_review");
+  assert.equal(manualInboxItem?.outreach.status, "no_draft");
+  assert.match(manualInboxItem?.annotation.operatorNote ?? "", /operator-entered lead/);
+
   assert.equal(
     inboxItems.find((item) => item.candidateId === candidateId)?.outreach.status,
     "draft_ready"
@@ -476,5 +497,8 @@ try {
 } finally {
   const sql = getPostgresClient();
   await sql`delete from scout_runs where run_id = ${runId} or run_id = ${secondRunId}`;
+  if (manualRunId) {
+    await sql`delete from scout_runs where run_id = ${manualRunId}`;
+  }
   await closeScoutSchemaClient();
 }

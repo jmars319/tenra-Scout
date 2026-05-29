@@ -84,6 +84,29 @@ export const leadInboxItemResponseSchema = z.object({
   errorMessage: z.string().optional()
 });
 
+export const createManualLeadRequestSchema = z
+  .object({
+    runId: z.string().trim().min(1).optional(),
+    market: z.string().trim().max(180).optional(),
+    query: z.string().trim().max(220).optional(),
+    businessName: z.string().trim().min(2).max(140),
+    primaryUrl: z.string().trim().min(4).max(400),
+    notes: z.string().trim().max(1600).default(""),
+    contactName: z.string().trim().max(120).optional(),
+    contactEmail: z.string().trim().email().optional(),
+    contactPhone: z.string().trim().max(80).optional()
+  })
+  .refine((value) => Boolean(value.runId || value.market || value.query), {
+    message: "Provide an existing runId or a market/query for a manual run."
+  });
+
+export const createManualLeadResponseSchema = z.object({
+  runId: z.string(),
+  candidateId: z.string(),
+  item: leadInboxItemSchema.optional(),
+  errorMessage: z.string().optional()
+});
+
 const leadInboxActionTargetSchema = z.object({
   runId: z.string().min(1),
   candidateId: z.string().min(1)
@@ -272,6 +295,8 @@ export type ListLeadAnnotationsResponse = z.infer<typeof listLeadAnnotationsResp
 export type LeadAnnotationResponse = z.infer<typeof leadAnnotationResponseSchema>;
 export type ListLeadInboxResponse = z.infer<typeof listLeadInboxResponseSchema>;
 export type LeadInboxItemResponse = z.infer<typeof leadInboxItemResponseSchema>;
+export type CreateManualLeadRequest = z.infer<typeof createManualLeadRequestSchema>;
+export type CreateManualLeadResponse = z.infer<typeof createManualLeadResponseSchema>;
 export type LeadInboxActionRequest = z.infer<typeof leadInboxActionRequestSchema>;
 export type LeadInboxBulkActionRequest = z.infer<typeof leadInboxBulkActionRequestSchema>;
 export type LeadInboxBulkActionResponse = z.infer<typeof leadInboxBulkActionResponseSchema>;

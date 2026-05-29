@@ -737,6 +737,29 @@ button[disabled] {
   min-width: 0;
 }
 
+.manual-lead-entry {
+  display: grid;
+  gap: 1rem;
+}
+
+.manual-lead-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.manual-lead-notes {
+  grid-column: span 2;
+}
+
+.manual-lead-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
 .lead-triage-controls,
 .lead-inbox-controls {
   display: grid;
@@ -769,9 +792,14 @@ button[disabled] {
   .lead-inbox-meta,
   .lead-inbox-outreach,
   .lead-inbox-controls,
+  .manual-lead-grid,
   .lead-pipeline-board,
   .comparison-metric-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .manual-lead-notes {
+    grid-column: span 1;
   }
 
   .candidate-review-actions,

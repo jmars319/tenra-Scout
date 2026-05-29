@@ -83,6 +83,7 @@ If a desktop DuckDuckGo run needs manual confirmation, Scout records that too.
 
 - Completed reports include an acquisition review panel.
 - Operators can manually add a known business by name and URL after the run.
+- Operators can also add one manual lead from the Lead Inbox through `POST /api/leads/manual`. Supplying `runId` attaches it to an existing completed run; omitting `runId` creates a completed manual run with source `operator-entered` and a lead annotation so it appears in the inbox immediately.
 - Operators can promote discarded acquisition results when Scout saved enough detail to reconstruct the candidate.
 - Added and promoted candidates are evaluated through the same presence detection, Playwright audit, business classification, and shortlist rules as live-search candidates.
 - Provenance labels distinguish live results, directory-snippet leads, manual additions, and promoted discarded results.

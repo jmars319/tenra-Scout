@@ -68,5 +68,6 @@ The report is intended to make operator judgment faster, not broader.
 - findings are normalized into stable issue types such as dead page, blocked content, missing contact path, missing primary CTA, accessibility issues, failed requests, and mobile layout issues
 - shortlist entries explain why the business matters, not only what broke
 - operator-added and promoted candidates are evaluated through the same presence, audit, classification, and shortlist rules while retaining their provenance labels, missed-business diagnostics, and acquisition-learning notes
+- the Lead Inbox includes a single manual lead fallback; `POST /api/leads/manual` can attach an operator-entered lead to an existing completed run or create a completed manual run with explicit operator-entered provenance
 - lead work is managed through both a pipeline board and a detailed inbox/detail view, with pipeline stages linking directly into matching inbox filters and a `Next Up` cue for the most urgent visible lead
 - structured run retrieval and queue state are Postgres-backed, while screenshot evidence remains local

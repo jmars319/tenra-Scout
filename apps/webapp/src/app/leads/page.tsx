@@ -4,6 +4,7 @@ import { AppFrame, Metric, MetricGrid, Panel } from "@scout/ui";
 
 import { LeadInbox } from "@/components/LeadInbox";
 import { LeadPipelineBoard } from "@/components/LeadPipelineBoard";
+import { ManualLeadEntry } from "@/components/ManualLeadEntry";
 import { ScoutNavigation } from "@/components/ScoutNavigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
@@ -73,6 +74,13 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
           description="A compact operating board for the current lead workload before opening the full inbox controls."
         >
           <LeadPipelineBoard items={items} today={today} />
+        </Panel>
+
+        <Panel
+          title="Manual Lead Fallback"
+          description="Use this for a single operator-entered lead when live acquisition misses a known business."
+        >
+          <ManualLeadEntry defaultMarket={queryParam} />
         </Panel>
 
         <Panel title="Lead Inbox">

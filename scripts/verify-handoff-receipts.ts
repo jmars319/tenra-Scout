@@ -4,6 +4,10 @@ import {
   buildProxyHandoffReceipt,
   healthEndpointForProxyShapeEndpoint
 } from "../apps/webapp/src/lib/server/handoffs/proxy-receipts.ts";
+import {
+  buildScoutGuardrailReviewRequest,
+  findProxyReceiptForGuardrail
+} from "../apps/webapp/src/lib/server/handoffs/guardrail-reviews.ts";
 import { describeProxyReceipt } from "../apps/webapp/src/lib/handoffs/proxy-receipt-copy.ts";
 import {
   leadInboxItemSchema,
@@ -52,6 +56,44 @@ const entry = {
   status: "ok",
   proxyReceipt: receipt
 } as const;
+
+assert.equal(findProxyReceiptForGuardrail([entry], receipt.traceId)?.traceId, receipt.traceId);
+assert.equal(findProxyReceiptForGuardrail([entry], "missing"), undefined);
+
+const guardrailReview = buildScoutGuardrailReviewRequest({
+  handoff: {
+    schema: "tenra-scout.opportunity-handoff.v1",
+    exportedAt: "2026-05-29T12:00:00.000Z",
+    sourceApp: "scout",
+    runId: "verify-run",
+    candidateId: "lead-1",
+    businessName: "Verification Lead",
+    primaryUrl: "https://verification.example",
+    evidenceMarkdown: "# Verification Lead\n\nRun: verify-run",
+    recommendedNextApps: ["assembly", "proxy"],
+    proxyShapeRequest: {
+      clientApp: "scout",
+      surface: "email",
+      profileId: "profile:default",
+      purpose: "Shape verification evidence.",
+      draftText: "# Verification Lead\n\nRun: verify-run",
+      hardConstraints: ["Do not invent contact details"],
+      traceId: "scout-verify-run-lead-1"
+    }
+  },
+  traceId: `${receipt.traceId}-guardrail-review`,
+  callbackUrl: "http://localhost:3000/api/handoffs/guardrail-decision/verify-run/lead-1",
+  proxyReceipt: receipt
+});
+
+assert.equal(guardrailReview.schema, "tenra-guardrail.external-action-review.v1");
+assert.equal(guardrailReview.sourceApp, "scout");
+assert.equal(guardrailReview.traceId, "scout-verify-run-lead-1-guardrail-review");
+assert.equal(
+  guardrailReview.callbackUrl,
+  "http://localhost:3000/api/handoffs/guardrail-decision/verify-run/lead-1"
+);
+assert.ok(guardrailReview.evidence.some((item) => item.label === "Proxy validation" && item.value === "valid"));
 
 scoutProxyHandoffReceiptSchema.parse(receipt);
 persistenceMetadataSchema.parse({

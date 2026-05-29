@@ -21,6 +21,12 @@ shape endpoint, usually `http://localhost:5173/api/shape-external-output`. The l
 history stores the direct-post receipt with the HTTP response status, Proxy validation result,
 `guardrailRecommended`, trace id, endpoint, and a short shaped-output preview.
 
+When a Proxy receipt needs review, Scout can send that exact receipt to Tenra Guardrail from
+the lead handoff history. The Guardrail review includes Scout lead context, Proxy validation,
+the delivery endpoint, the shaped-output preview, and a callback URL for returning the
+Guardrail decision to Scout. The existing direct Guardrail send remains available for reviewing
+Scout evidence without a Proxy receipt.
+
 Scout health checks keep the delivery URL unchanged but test Proxy shape destinations through
 Proxy's read-only health endpoint. A configured `/api/shape-external-output` URL is checked at
 the same origin's `/api/suite-health` endpoint, so operators can verify Proxy is reachable

@@ -363,12 +363,19 @@ export function LeadDetailView({
     }
   }
 
-  async function deliverHandoff(target: HandoffTarget) {
+  async function deliverHandoff(
+    target: HandoffTarget,
+    options: { guardrailSourceTraceId?: string | undefined } = {}
+  ) {
     if (pendingKey) {
       return;
     }
 
-    setPendingKey(`deliver-${target}`);
+    setPendingKey(
+      options.guardrailSourceTraceId
+        ? `deliver-${target}-${options.guardrailSourceTraceId}`
+        : `deliver-${target}`
+    );
     const response = await fetch(
       `/api/handoffs/deliver/${encodeURIComponent(item.runId)}/${encodeURIComponent(item.candidateId)}`,
       {
@@ -376,7 +383,13 @@ export function LeadDetailView({
         headers: {
           "content-type": "application/json"
         },
-        body: JSON.stringify({ target, endpoint: endpointConfig[target].trim() || undefined })
+        body: JSON.stringify({
+          target,
+          endpoint: endpointConfig[target].trim() || undefined,
+          ...(options.guardrailSourceTraceId
+            ? { guardrailSourceTraceId: options.guardrailSourceTraceId }
+            : {})
+        })
       }
     );
 
@@ -634,6 +647,22 @@ export function LeadDetailView({
                     >
                       {entry.status === "failed" ? "Retry" : "Resend"} {entry.target}
                     </button>
+                    {entry.proxyReceipt ? (
+                      <button
+                        className="secondary-button"
+                        disabled={Boolean(pendingKey)}
+                        onClick={() =>
+                          void deliverHandoff("guardrail", {
+                            guardrailSourceTraceId: entry.proxyReceipt?.traceId
+                          })
+                        }
+                        type="button"
+                      >
+                        {pendingKey === `deliver-guardrail-${entry.proxyReceipt.traceId}`
+                          ? "Sending..."
+                          : "Send receipt to Guardrail"}
+                      </button>
+                    ) : null}
                   </div>
                 </li>
               ))}

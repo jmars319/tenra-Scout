@@ -2,9 +2,14 @@ import { buildScoutOpportunityHandoff } from "@scout/api-contracts";
 import { NextResponse } from "next/server";
 import {
   getScoutRun,
+  getScoutRunRecord,
   recordScoutHandoffDelivery
 } from "../../../../../../lib/server/scout-runner.ts";
 import { buildProxyHandoffReceipt } from "../../../../../../lib/server/handoffs/proxy-receipts.ts";
+import {
+  buildScoutGuardrailReviewRequest,
+  findProxyReceiptForGuardrail
+} from "../../../../../../lib/server/handoffs/guardrail-reviews.ts";
 
 interface Params {
   params: Promise<{
@@ -25,6 +30,7 @@ export async function POST(request: Request, { params }: Params) {
     const body = (await request.json()) as {
       target?: "assembly" | "proxy" | "guardrail";
       endpoint?: string;
+      guardrailSourceTraceId?: string;
     };
     const target = body.target === "proxy" ? "proxy" : body.target === "guardrail" ? "guardrail" : "assembly";
     const endpoint = body.endpoint || defaultEndpoint(target);
@@ -35,29 +41,38 @@ export async function POST(request: Request, { params }: Params) {
     }
 
     const handoff = buildScoutOpportunityHandoff({ report, candidateId });
+    const runRecord = target === "guardrail" ? await getScoutRunRecord(runId) : null;
+    const guardrailSourceReceipt = findProxyReceiptForGuardrail(
+      runRecord?.persistence.handoffHistory ?? [],
+      body.guardrailSourceTraceId?.trim()
+    );
+    if (target === "guardrail" && body.guardrailSourceTraceId?.trim() && !guardrailSourceReceipt) {
+      return NextResponse.json({ errorMessage: "Proxy receipt not found for Guardrail review." }, { status: 404 });
+    }
     const traceId =
-      target === "guardrail" ? `${handoff.proxyShapeRequest.traceId}-guardrail` : handoff.proxyShapeRequest.traceId;
+      target === "guardrail"
+        ? guardrailSourceReceipt
+          ? `${guardrailSourceReceipt.traceId}-guardrail-review`
+          : `${handoff.proxyShapeRequest.traceId}-guardrail`
+        : handoff.proxyShapeRequest.traceId;
     const payload =
       target === "proxy"
         ? handoff.proxyShapeRequest
         : target === "guardrail"
-          ? {
-              schema: "tenra-guardrail.external-action-review.v1",
-              exportedAt: handoff.exportedAt,
-              sourceApp: "scout",
-              actionKind: "send-message",
-              actorLabel: "Scout lead inbox",
-              targetLabel: handoff.businessName,
-              summary: "Scout opportunity evidence is ready for reviewed outreach or Assembly intake.",
-              evidence: [
-                { label: "Business", value: handoff.businessName },
-                { label: "Primary URL", value: handoff.primaryUrl },
-                { label: "Scout run", value: handoff.runId }
-              ],
-              recommendedDecision: "review",
-              traceId
-            }
+          ? buildScoutGuardrailReviewRequest({
+              handoff,
+              traceId,
+              proxyReceipt: guardrailSourceReceipt,
+              callbackUrl: new URL(
+                `/api/handoffs/guardrail-decision/${encodeURIComponent(runId)}/${encodeURIComponent(candidateId)}`,
+                request.url
+              ).toString()
+            })
           : handoff;
+    const deliveryMessage =
+      target === "guardrail" && guardrailSourceReceipt
+        ? `Guardrail review created from Proxy receipt ${guardrailSourceReceipt.traceId}.`
+        : undefined;
 
     if (!endpoint) {
       const record = await recordScoutHandoffDelivery({
@@ -67,7 +82,7 @@ export async function POST(request: Request, { params }: Params) {
         mode: "json-fallback",
         traceId,
         status: "ok",
-        message: "No endpoint configured; returned JSON fallback."
+        message: deliveryMessage ?? "No endpoint configured; returned JSON fallback."
       });
       return NextResponse.json({
         ok: true,
@@ -107,7 +122,7 @@ export async function POST(request: Request, { params }: Params) {
     }
 
     const responseBody = (await response.json().catch(() => ({}))) as unknown;
-    const proxyReceipt =
+    const directPostProxyReceipt =
       target === "proxy"
         ? buildProxyHandoffReceipt({
             endpoint,
@@ -124,7 +139,8 @@ export async function POST(request: Request, { params }: Params) {
       endpoint,
       traceId,
       status: "ok",
-      ...(proxyReceipt ? { proxyReceipt } : {})
+      ...(deliveryMessage ? { message: deliveryMessage } : {}),
+      ...(directPostProxyReceipt ? { proxyReceipt: directPostProxyReceipt } : {})
     });
     return NextResponse.json({
       ok: true,

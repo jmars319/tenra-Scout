@@ -36,6 +36,12 @@ create table if not exists scout_runs (
   persistence_metadata jsonb not null default '{}'::jsonb
 );
 
+create table if not exists scout_worker_heartbeats (
+  worker_id text primary key,
+  heartbeat_at timestamptz not null default now(),
+  note text not null default ''
+);
+
 alter table scout_runs add column if not exists queued_at timestamptz;
 alter table scout_runs add column if not exists started_at timestamptz;
 alter table scout_runs add column if not exists finished_at timestamptz;

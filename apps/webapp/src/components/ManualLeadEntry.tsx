@@ -18,7 +18,9 @@ async function readErrorMessage(response: Response): Promise<string> {
 }
 
 function optionalValue(formData: FormData, key: string): string | undefined {
-  const value = String(formData.get(key) ?? "").trim();
+  const rawValue = formData.get(key);
+  const value = typeof rawValue === "string" ? rawValue.trim() : "";
+
   return value ? value : undefined;
 }
 
@@ -68,7 +70,12 @@ export function ManualLeadEntry({ defaultMarket = "" }: ManualLeadEntryProps) {
   }
 
   return (
-    <form className="manual-lead-entry" onSubmit={submitManualLead}>
+    <form
+      className="manual-lead-entry"
+      onSubmit={(event) => {
+        void submitManualLead(event);
+      }}
+    >
       <div>
         <h2>Manual Lead</h2>
         <p className="muted">

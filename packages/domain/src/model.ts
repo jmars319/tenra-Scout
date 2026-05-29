@@ -339,6 +339,9 @@ export interface LeadInboxItem {
   candidateId: string;
   businessName: string;
   primaryUrl: string;
+  source?: string | undefined;
+  provenance?: CandidateProvenanceKind | undefined;
+  provenanceNote?: string | undefined;
   shortlistRank?: number | undefined;
   priorityScore?: number | undefined;
   presenceType?: PresenceType | undefined;

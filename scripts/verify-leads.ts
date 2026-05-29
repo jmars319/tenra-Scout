@@ -6,8 +6,10 @@ import { createEmptyAcquisitionDiagnostics } from "../packages/domain/src/report
 
 import {
   buildLeadExport,
-  buildLeadInboxExport
+  buildLeadInboxExport,
+  buildLeadPackExport
 } from "../apps/webapp/src/lib/server/leads/lead-export-service.ts";
+import { buildOperatorReadinessReport } from "../apps/webapp/src/lib/server/operator/readiness.ts";
 import {
   runLeadInboxAction,
   runLeadInboxBulkAction
@@ -409,6 +411,8 @@ try {
   const manualInboxItem = await getLeadInboxItem(manualLead.runId, manualLead.candidateId);
   assert.equal(manualInboxItem?.annotation.state, "needs_review");
   assert.equal(manualInboxItem?.outreach.status, "no_draft");
+  assert.equal(manualInboxItem?.provenance, "manual");
+  assert.equal(manualInboxItem?.source, "operator-entered");
   assert.match(manualInboxItem?.annotation.operatorNote ?? "", /operator-entered lead/);
 
   assert.equal(
@@ -457,6 +461,28 @@ try {
   assert.match(inboxMarkdownExport.body, /Second lead is due for owner follow-up\./);
   assert.match(inboxMarkdownExport.body, /Follow up/);
   assert.match(inboxMarkdownExport.body, /Sample quality/);
+
+  const leadPackMarkdown = await buildLeadPackExport({
+    runId,
+    candidateId,
+    format: "markdown"
+  });
+  assert.match(leadPackMarkdown.contentType, /text\/markdown/);
+  assert.match(leadPackMarkdown.body, /# Scout Lead Pack/);
+  assert.match(leadPackMarkdown.body, /Proxy receipt: Missing/);
+
+  const manualLeadPackJson = await buildLeadPackExport({
+    runId: manualLead.runId,
+    candidateId: manualLead.candidateId,
+    format: "json"
+  });
+  assert.match(manualLeadPackJson.contentType, /application\/json/);
+  assert.match(manualLeadPackJson.body, /operator-entered/);
+
+  const readiness = await buildOperatorReadinessReport();
+  assert(readiness.checks.some((check) => check.id === "database"));
+  assert(readiness.checks.some((check) => check.id === "worker"));
+  assert(readiness.checks.some((check) => check.id === "evidence"));
 
   const bulkFollowUpItems = await runLeadInboxBulkAction({
     items: [

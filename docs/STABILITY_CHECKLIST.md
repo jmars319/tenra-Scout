@@ -77,7 +77,7 @@
 - `qa:operator`
   Prints the manual operator QA checklist and reports whether local desktop artifacts, the installed app, and the desktop env file are present.
 - `doctor`
-  Prints Node version, checks env and package map, and confirms Playwright CLI availability in the web app.
+  Prints Node version, checks env and package map, confirms Playwright CLI availability in the web app, and points operators to the runtime readiness endpoint.
 
 ## Practical Smoke Coverage
 
@@ -89,7 +89,7 @@ The repo has been exercised with:
 
 That coverage verifies schema bootstrap, repository persistence, legacy-import handling, screenshot storage, and report retrieval path.
 That coverage also verifies the Postgres-backed queue loop and repository-driven lifecycle updates.
-`verify:http-smoke` adds a real HTTP boundary check without introducing a larger end-to-end framework. It now covers run submission, report retrieval, lead save, bulk lead update, lead inbox, lead detail, run pages, lead export, and run control actions.
+`verify:http-smoke` adds a real HTTP boundary check without introducing a larger end-to-end framework. It now covers run submission, report retrieval, lead save, bulk lead update, lead inbox, lead detail, run pages, lead export, lead-pack export, operator readiness, and run control actions.
 `verify:providers` adds direct protection for the hardened DuckDuckGo, Google, and Bing adapters plus manual-confirmation diagnostics without introducing a heavier test harness.
 
 ## Expected Limitations

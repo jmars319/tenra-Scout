@@ -751,6 +751,11 @@ export function LeadInbox({
                         {describeSampleQuality(item.sampleQuality)}
                       </Tag>
                     ) : null}
+                    {item.provenance ? (
+                      <Tag tone={item.provenance === "manual" ? "warn" : "neutral"}>
+                        {item.provenance === "manual" ? "Operator-entered" : humanizeLeadValue(item.provenance)}
+                      </Tag>
+                    ) : null}
                     <Tag>{item.findingCount} findings</Tag>
                     {item.highSeverityFindings > 0 ? (
                       <Tag tone="danger">{item.highSeverityFindings} high severity</Tag>

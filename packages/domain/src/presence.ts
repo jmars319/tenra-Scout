@@ -218,7 +218,7 @@ export function evaluatePresenceUrl(input: {
     countMatchingPatterns(combinedText, GUIDE_TEXT_REGEX_PATTERNS);
   const guidePathMatch = matchesAnyPattern(pathname, GUIDE_PATH_PATTERNS);
 
-  if (matchesKnownDomain(domain, FACEBOOK_DOMAINS as unknown as string[])) {
+  if (matchesKnownDomain(domain, FACEBOOK_DOMAINS)) {
     if (pathname.includes("/pages/") || pathname.includes("/profile.php")) {
       return buildRuleMatch("facebook_only", "Result resolves to a Facebook profile page.", "confirmed");
     }

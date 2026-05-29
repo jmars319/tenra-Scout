@@ -272,6 +272,24 @@ async function verifyLeadUiFlow(baseUrl: string, runId: string, report: NonNulla
   });
   assert.equal(exportResponse.status, 200);
   assert.match(await exportResponse.text(), /# Scout Lead Inbox/);
+
+  const packResponse = await fetch(
+    `${baseUrl}/api/runs/${runId}/leads/${candidateId}/export?format=markdown`,
+    {
+      signal: AbortSignal.timeout(10_000)
+    }
+  );
+  assert.equal(packResponse.status, 200);
+  assert.match(await packResponse.text(), /# Scout Lead Pack/);
+
+  const readinessResponse = await fetch(`${baseUrl}/api/operator/readiness`, {
+    signal: AbortSignal.timeout(10_000)
+  });
+  assert([200, 503].includes(readinessResponse.status));
+  const readiness = (await readinessResponse.json()) as {
+    checks?: Array<{ id: string }>;
+  };
+  assert(readiness.checks?.some((check) => check.id === "database"));
 }
 
 async function verifyRunControls(baseUrl: string): Promise<string[]> {

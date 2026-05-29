@@ -4,6 +4,11 @@
   "version": "0.1.0",
   "description": "Scout desktop shell for tenra's deterministic web presence market scanner.",
   "author": "tenra",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmars319/tenra-Scout.git",
+    "directory": "apps/desktopapp"
+  },
   "type": "module",
   "main": "./scripts/main.mjs",
   "scripts": {

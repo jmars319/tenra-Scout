@@ -69,5 +69,6 @@ The report is intended to make operator judgment faster, not broader.
 - shortlist entries explain why the business matters, not only what broke
 - operator-added and promoted candidates are evaluated through the same presence, audit, classification, and shortlist rules while retaining their provenance labels, missed-business diagnostics, and acquisition-learning notes
 - the Lead Inbox includes a single manual lead fallback; `POST /api/leads/manual` can attach an operator-entered lead to an existing completed run or create a completed manual run with explicit operator-entered provenance
-- lead work is managed through both a pipeline board and a detailed inbox/detail view, with pipeline stages linking directly into matching inbox filters and a `Next Up` cue for the most urgent visible lead
+- lead work is managed through both a pipeline board and a detailed inbox/detail view, with pipeline stages linking directly into matching inbox filters, a `Next Up` cue for the most urgent visible lead, a per-lead completion checklist, and full lead-pack export
+- `/api/operator/readiness` reports local Postgres/schema, worker heartbeat, provider posture, OpenAI outreach, Proxy/Guardrail endpoint health, and evidence-directory writability so daily use fails clearly when local services are not ready
 - structured run retrieval and queue state are Postgres-backed, while screenshot evidence remains local

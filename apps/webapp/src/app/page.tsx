@@ -2,6 +2,7 @@ import { APP_NAME } from "@scout/config";
 import { AppFrame, Metric, MetricGrid, Panel, Tag } from "@scout/ui";
 
 import { RecentRunsPanel } from "@/components/RecentRunsPanel";
+import { OperatorReadinessPanel } from "@/components/OperatorReadinessPanel";
 import { RunForm } from "@/components/RunForm";
 import { SavedMarketsPanel } from "@/components/SavedMarketsPanel";
 import { ScoutNavigation } from "@/components/ScoutNavigation";
@@ -57,6 +58,13 @@ export default async function HomePage() {
           <Metric label="Audit Passes" value="Desktop + Mobile" />
           <Metric label="Evidence" value="Screenshots per page" />
         </MetricGrid>
+
+        <Panel
+          title="Operator Readiness"
+          description="Local checks for Postgres, worker heartbeat, provider posture, outreach drafting, handoff endpoints, and evidence storage."
+        >
+          <OperatorReadinessPanel />
+        </Panel>
 
         <div className="scout-grid two-up">
           <Panel title="What Scout Is">

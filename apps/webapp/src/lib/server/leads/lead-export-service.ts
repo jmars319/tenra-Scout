@@ -6,24 +6,30 @@ import type {
   LeadOpportunity,
   LeadStatus,
   OutreachDraft,
-  ScoutRunReport
+  ScoutRunReport,
+  SearchCandidate
 } from "@scout/domain";
 
 import { getScoutRun } from "../scout-runner.ts";
 import { createOutreachDraftRepository } from "../storage/outreach-draft-repository.ts";
 import {
   filterLeadInboxItems,
+  getLeadInboxItem,
   listLeadInboxItems,
   type LeadInboxFilters
 } from "./lead-inbox-service.ts";
 import { getLeadAnnotations } from "./lead-workflow-service.ts";
 
 export type LeadExportFormat = "csv" | "markdown";
+export type LeadPackExportFormat = "json" | "markdown";
 
 interface LeadExportRow {
   candidateId: string;
   businessName: string;
   primaryUrl: string;
+  source: string;
+  provenance: string;
+  provenanceNote: string;
   state: LeadStatus;
   operatorNote: string;
   followUpDate: string;
@@ -139,6 +145,9 @@ function buildRows(
   const breakdownByCandidate = new Map(
     report.businessBreakdowns.map((business) => [business.candidateId, business])
   );
+  const candidatesByCandidate = new Map(
+    report.candidates.map((candidate) => [candidate.candidateId, candidate])
+  );
   const shortlistByCandidate = new Map(
     report.shortlist.map((lead, index) => [lead.candidateId, { lead, rank: index + 1 }])
   );
@@ -152,7 +161,7 @@ function buildRows(
   return candidateIds.map((candidateId) => {
     const shortlist = shortlistByCandidate.get(candidateId);
     const business = breakdownByCandidate.get(candidateId);
-    const source = buildRowSource(candidateId, business, shortlist?.lead);
+    const source = buildRowSource(candidateId, business, shortlist?.lead, candidatesByCandidate.get(candidateId));
     const annotation = getAnnotation(annotationsByCandidate, candidateId);
     const outreach = buildOutreachSummary(annotation, draftsByCandidate.get(candidateId));
 
@@ -160,6 +169,9 @@ function buildRows(
       candidateId,
       businessName: source.businessName,
       primaryUrl: source.primaryUrl,
+      source: source.source,
+      provenance: source.provenance,
+      provenanceNote: source.provenanceNote,
       state: annotation.state,
       operatorNote: annotation.operatorNote,
       followUpDate: annotation.followUpDate ?? "",
@@ -180,13 +192,17 @@ function buildRows(
 function buildRowSource(
   candidateId: string,
   business: BusinessBreakdown | undefined,
-  lead: LeadOpportunity | undefined
+  lead: LeadOpportunity | undefined,
+  candidate: SearchCandidate | undefined
 ): {
   businessName: string;
   primaryUrl: string;
   presenceType: string;
   presenceQuality: string;
   confidence: string;
+  source: string;
+  provenance: string;
+  provenanceNote: string;
   findingCount: number;
   highSeverityFindings: number;
   topIssues: string[];
@@ -198,6 +214,9 @@ function buildRowSource(
       presenceType: humanize(business.presenceType),
       presenceQuality: humanize(business.presenceQuality),
       confidence: humanize(business.confidence),
+      source: candidate?.source ?? "",
+      provenance: candidate?.provenance ? humanize(candidate.provenance) : "",
+      provenanceNote: candidate?.provenanceNote ?? "",
       findingCount: business.findingCount,
       highSeverityFindings: business.highSeverityFindings,
       topIssues: business.topIssues.map(humanize)
@@ -210,6 +229,9 @@ function buildRowSource(
     presenceType: lead ? humanize(lead.presenceType) : "",
     presenceQuality: lead ? humanize(lead.presenceQuality) : "",
     confidence: lead ? humanize(lead.confidence) : "",
+    source: candidate?.source ?? "",
+    provenance: candidate?.provenance ? humanize(candidate.provenance) : "",
+    provenanceNote: candidate?.provenanceNote ?? "",
     findingCount: 0,
     highSeverityFindings: 0,
     topIssues: []
@@ -224,6 +246,9 @@ function buildCsv(rows: LeadExportRow[]): string {
     "shortlist_rank",
     "priority_score",
     "primary_url",
+    "source",
+    "provenance",
+    "provenance_note",
     "presence_type",
     "presence_quality",
     "confidence",
@@ -246,6 +271,9 @@ function buildCsv(rows: LeadExportRow[]): string {
       row.shortlistRank,
       row.priorityScore,
       row.primaryUrl,
+      row.source,
+      row.provenance,
+      row.provenanceNote,
       row.presenceType,
       row.presenceQuality,
       row.confidence,
@@ -275,6 +303,8 @@ function buildMarkdown(report: ScoutRunReport, rows: LeadExportRow[], generatedA
       `- State: ${humanize(row.state)}`,
       `- Follow up: ${row.followUpDate || "None"}`,
       `- URL: ${row.primaryUrl || "None"}`,
+      `- Source: ${row.source || "Unknown"}`,
+      `- Provenance: ${row.provenance || "Unknown"}`,
       `- Shortlist rank: ${row.shortlistRank || "None"}`,
       `- Presence: ${row.presenceType || "Unknown"} / ${row.presenceQuality || "Unknown"}`,
       `- Confidence: ${row.confidence || "Unknown"}`,
@@ -321,6 +351,9 @@ function buildInboxCsv(items: LeadInboxItem[]): string {
     "shortlist_rank",
     "priority_score",
     "primary_url",
+    "source",
+    "provenance",
+    "provenance_note",
     "presence_type",
     "presence_quality",
     "confidence",
@@ -347,6 +380,9 @@ function buildInboxCsv(items: LeadInboxItem[]): string {
       item.shortlistRank ?? "",
       item.priorityScore ?? "",
       item.primaryUrl,
+      item.source ?? "",
+      item.provenance ? humanize(item.provenance) : "",
+      item.provenanceNote ?? "",
       item.presenceType ? humanize(item.presenceType) : "",
       item.presenceQuality ? humanize(item.presenceQuality) : "",
       item.confidence ? humanize(item.confidence) : "",
@@ -381,6 +417,8 @@ function buildInboxMarkdown(items: LeadInboxItem[], generatedAt: string): string
       `- Query: ${item.rawQuery}`,
       `- Run: ${item.runId}`,
       `- URL: ${item.primaryUrl || "None"}`,
+      `- Source: ${item.source ?? "Unknown"}`,
+      `- Provenance: ${item.provenance ? humanize(item.provenance) : "Unknown"}`,
       `- Shortlist rank: ${item.shortlistRank ?? "None"}`,
       `- Priority score: ${item.priorityScore ?? "None"}`,
       `- Presence: ${item.presenceType ? humanize(item.presenceType) : "Unknown"} / ${
@@ -408,6 +446,118 @@ function buildInboxMarkdown(items: LeadInboxItem[], generatedAt: string): string
   return ["# Scout Lead Inbox", "", `Generated: ${generatedAt}`, "", ...sections]
     .join("\n")
     .trim();
+}
+
+function buildLeadPackMarkdown(input: {
+  item: LeadInboxItem;
+  report: ScoutRunReport;
+  draft?: OutreachDraft | undefined;
+  candidate?: SearchCandidate | undefined;
+  generatedAt: string;
+}) {
+  const { item, report, draft, candidate, generatedAt } = input;
+  const findings = report.findings.filter((finding) => finding.candidateId === item.candidateId);
+  const business = report.businessBreakdowns.find(
+    (breakdown) => breakdown.candidateId === item.candidateId
+  );
+  const lines = [
+    `# Scout Lead Pack: ${item.businessName}`,
+    "",
+    `Generated: ${generatedAt}`,
+    `Run: ${item.runId}`,
+    `Candidate: ${item.candidateId}`,
+    `Market: ${item.marketTerm}`,
+    `Query: ${item.rawQuery}`,
+    `URL: ${item.primaryUrl || "None"}`,
+    `Source: ${item.source ?? candidate?.source ?? "Unknown"}`,
+    `Provenance: ${
+      item.provenance
+        ? humanize(item.provenance)
+        : candidate?.provenance
+          ? humanize(candidate.provenance)
+          : "Unknown"
+    }`,
+    "",
+    "## Completion",
+    "",
+    `- Lead state: ${humanize(item.annotation.state)}`,
+    `- Outreach: ${humanize(item.outreach.status)}`,
+    `- Proxy receipt: ${item.handoffHistory.some((entry) => entry.proxyReceipt) ? "Present" : "Missing"}`,
+    `- Guardrail request: ${item.handoffHistory.some((entry) => entry.target === "guardrail") ? "Present" : "Missing"}`,
+    `- Guardrail decision: ${item.handoffHistory.some((entry) => entry.mode === "decision-return") ? "Present" : "Missing"}`,
+    "",
+    "## Evidence",
+    "",
+    `- Presence: ${item.presenceType ? humanize(item.presenceType) : "Unknown"} / ${
+      item.presenceQuality ? humanize(item.presenceQuality) : "Unknown"
+    }`,
+    `- Confidence: ${item.confidence ? humanize(item.confidence) : "Unknown"}`,
+    `- Findings: ${item.findingCount} (${item.highSeverityFindings} high severity)`,
+    `- Top issues: ${item.topIssues.length ? item.topIssues.map(humanize).join(", ") : "None"}`,
+    "",
+    "## Contact And Outreach",
+    "",
+    `- Recommended channel: ${
+      item.outreach.recommendedChannelLabel ??
+      (item.outreach.recommendedChannel ? humanize(item.outreach.recommendedChannel) : "None")
+    }`,
+    `- Next action: ${item.outreach.nextAction}`,
+    `- Subject: ${draft?.subjectLine || "None"}`,
+    `- Operator note: ${item.annotation.operatorNote || "None"}`
+  ];
+
+  if (item.provenanceNote || candidate?.provenanceNote) {
+    lines.push("", "## Provenance", "", item.provenanceNote ?? candidate?.provenanceNote ?? "");
+  }
+
+  if (business?.detectionNotes.length) {
+    lines.push("", "## Detection Notes", "", ...business.detectionNotes.map((note) => `- ${note}`));
+  }
+
+  if (findings.length) {
+    lines.push(
+      "",
+      "## Findings",
+      "",
+      ...findings.map(
+        (finding) =>
+          `- ${humanize(finding.severity)} / ${humanize(finding.issueType)}: ${finding.message}`
+      )
+    );
+  }
+
+  if (draft?.body || draft?.shortMessage || draft?.phoneTalkingPoints) {
+    lines.push("", "## Drafts", "");
+    if (draft.body) {
+      lines.push("### Email", "", draft.body, "");
+    }
+    if (draft.shortMessage) {
+      lines.push("### Short Message", "", draft.shortMessage, "");
+    }
+    if (draft.phoneTalkingPoints) {
+      lines.push(
+        "### Phone",
+        "",
+        draft.phoneTalkingPoints.opener,
+        ...draft.phoneTalkingPoints.keyPoints.map((point) => `- ${point}`),
+        draft.phoneTalkingPoints.close
+      );
+    }
+  }
+
+  if (item.handoffHistory.length) {
+    lines.push(
+      "",
+      "## Handoff History",
+      "",
+      ...item.handoffHistory.map(
+        (entry) =>
+          `- ${entry.exportedAt}: ${entry.target} / ${entry.mode} / ${entry.status} / ${entry.traceId}`
+      )
+    );
+  }
+
+  return lines.join("\n").trim();
 }
 
 export async function buildLeadExport(input: {
@@ -464,5 +614,53 @@ export async function buildLeadInboxExport(input: {
     body: buildInboxCsv(items),
     contentType: "text/csv; charset=utf-8",
     filename: `${baseName}.csv`
+  };
+}
+
+export async function buildLeadPackExport(input: {
+  runId: string;
+  candidateId: string;
+  format: LeadPackExportFormat;
+}): Promise<LeadExportResult> {
+  const report = await getScoutRun(input.runId);
+
+  if (!report) {
+    throw new Error("Scout run not found.");
+  }
+
+  const item = await getLeadInboxItem(input.runId, input.candidateId);
+
+  if (!item) {
+    throw new Error("Scout lead not found.");
+  }
+
+  const draft = (await createOutreachDraftRepository().get(input.runId, input.candidateId)) ?? undefined;
+  const candidate = report.candidates.find((entry) => entry.candidateId === input.candidateId);
+  const generatedAt = new Date().toISOString();
+  const baseName = sanitizeFileSegment(`scout-lead-pack-${item.businessName}-${input.runId}`);
+  const pack = {
+    generatedAt,
+    item,
+    candidate,
+    draft,
+    findings: report.findings.filter((finding) => finding.candidateId === input.candidateId),
+    businessBreakdown: report.businessBreakdowns.find(
+      (breakdown) => breakdown.candidateId === input.candidateId
+    ),
+    handoffHistory: item.handoffHistory
+  };
+
+  if (input.format === "json") {
+    return {
+      body: JSON.stringify(pack, null, 2),
+      contentType: "application/json; charset=utf-8",
+      filename: `${baseName}.json`
+    };
+  }
+
+  return {
+    body: buildLeadPackMarkdown({ item, report, draft, candidate, generatedAt }),
+    contentType: "text/markdown; charset=utf-8",
+    filename: `${baseName}.md`
   };
 }

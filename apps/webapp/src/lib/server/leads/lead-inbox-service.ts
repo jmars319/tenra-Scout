@@ -248,6 +248,9 @@ function buildLeadInboxItems(
         candidate?.title ??
         record.annotation.candidateId,
       primaryUrl: business?.primaryUrl ?? shortlist?.primaryUrl ?? candidate?.url ?? "",
+      ...(candidate?.source ? { source: candidate.source } : {}),
+      ...(candidate?.provenance ? { provenance: candidate.provenance } : {}),
+      ...(candidate?.provenanceNote ? { provenanceNote: candidate.provenanceNote } : {}),
       ...(shortlistIndex >= 0 ? { shortlistRank: shortlistIndex + 1 } : {}),
       ...(shortlist ? { priorityScore: shortlist.priorityScore } : {}),
       ...(presenceType ? { presenceType } : {}),

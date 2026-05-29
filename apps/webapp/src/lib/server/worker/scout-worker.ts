@@ -6,6 +6,7 @@ import { buildFailedReport } from "../report/failed-report.ts";
 import { normalizePersistedIntent } from "../storage/persisted-run-record.ts";
 import { createRunRepository, type RunRepository } from "../storage/run-repository.ts";
 import type { PersistedRunRecord } from "../storage/persisted-run-record.ts";
+import { recordScoutWorkerHeartbeat } from "../storage/worker-heartbeats.ts";
 import { executeScoutRunRecord } from "./scout-executor.ts";
 
 type WorkerExecutionResult = "idle" | "completed" | "failed";
@@ -115,13 +116,22 @@ export async function startScoutWorker(options: ScoutWorkerOptions): Promise<voi
   process.on("SIGTERM", stop);
 
   try {
+    await recordScoutWorkerHeartbeat(workerId, "Scout worker started and is polling the queue.");
     while (!stopped) {
+      await recordScoutWorkerHeartbeat(workerId, "Scout worker is polling the queue.");
       await repository.requeueStaleRuns(staleRunMs);
       const result = await processNextQueuedRun({
         workerId,
         repository,
         ...(options.executeRun ? { executeRun: options.executeRun } : {})
       });
+
+      if (result.outcome !== "idle") {
+        await recordScoutWorkerHeartbeat(
+          workerId,
+          `Scout worker ${result.outcome} run ${result.runId ?? "unknown"}.`
+        );
+      }
 
       if (options.once) {
         return;

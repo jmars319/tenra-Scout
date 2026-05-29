@@ -209,6 +209,39 @@ function buildMailtoHref(draft: OutreachDraft | undefined): string | null {
   return `mailto:${email}?${params.toString()}`;
 }
 
+function buildCompletionChecklist(item: LeadInboxItem, draft: OutreachDraft | undefined) {
+  return [
+    {
+      label: "Lead triaged",
+      complete: item.annotation.state !== "needs_review"
+    },
+    {
+      label: "Contact analyzed",
+      complete: Boolean(draft)
+    },
+    {
+      label: "Outreach draft ready",
+      complete: Boolean(draft?.body.trim() || draft?.shortMessage?.trim() || draft?.phoneTalkingPoints)
+    },
+    {
+      label: "Proxy receipt captured",
+      complete: item.handoffHistory.some((entry) => Boolean(entry.proxyReceipt))
+    },
+    {
+      label: "Guardrail review requested",
+      complete: item.handoffHistory.some((entry) => entry.target === "guardrail")
+    },
+    {
+      label: "Guardrail decision returned",
+      complete: item.handoffHistory.some((entry) => entry.mode === "decision-return")
+    },
+    {
+      label: "Operator contacted or closed",
+      complete: item.annotation.state === "contacted" || isClosed(item.annotation.state)
+    }
+  ];
+}
+
 export function LeadDetailView({
   initialItem,
   initialDraft,
@@ -232,6 +265,7 @@ export function LeadDetailView({
   const phoneChannel = draft?.contactChannels.find((channel) => channel.kind === "phone");
   const timeline = buildTimeline(item, draft);
   const hasDraft = Boolean(draft?.subjectLine.trim() || draft?.body.trim() || draft?.shortMessage?.trim());
+  const completionChecklist = buildCompletionChecklist(item, draft);
 
   function updateAnnotation(apply: (annotation: LeadInboxItem["annotation"]) => LeadInboxItem["annotation"]) {
     setItem((current) => ({
@@ -501,6 +535,11 @@ export function LeadDetailView({
               </Tag>
             ) : null}
             {item.shortlistRank ? <Tag tone="warn">Shortlist #{item.shortlistRank}</Tag> : null}
+            {item.provenance ? (
+              <Tag tone={item.provenance === "manual" ? "warn" : "neutral"}>
+                {item.provenance === "manual" ? "Operator-entered" : humanizeLeadValue(item.provenance)}
+              </Tag>
+            ) : null}
           </div>
         </div>
 
@@ -547,6 +586,18 @@ export function LeadDetailView({
             rel="noreferrer"
           >
             Proxy Shape JSON
+          </a>
+          <a
+            className="secondary-button"
+            href={`/api/runs/${encodeURIComponent(item.runId)}/leads/${encodeURIComponent(item.candidateId)}/export?format=markdown`}
+          >
+            Lead Pack
+          </a>
+          <a
+            className="secondary-button"
+            href={`/api/runs/${encodeURIComponent(item.runId)}/leads/${encodeURIComponent(item.candidateId)}/export?format=json`}
+          >
+            Pack JSON
           </a>
           <button
             className="secondary-button"
@@ -671,6 +722,17 @@ export function LeadDetailView({
         ) : null}
 
       <div className="scout-grid report-overview-grid">
+        <section className="report-card lead-detail-section">
+          <div className="section-label">Completion Checklist</div>
+          <div className="tag-row">
+            {completionChecklist.map((entry) => (
+              <Tag key={entry.label} tone={entry.complete ? "good" : "warn"}>
+                {entry.complete ? "Done" : "Open"}: {entry.label}
+              </Tag>
+            ))}
+          </div>
+        </section>
+
         <section className="report-card lead-detail-section">
           <div className="section-label">Timeline</div>
           <ol className="lead-timeline">
@@ -841,6 +903,11 @@ export function LeadDetailView({
           {candidate?.provenanceNote ? (
             <p className="muted" style={{ margin: 0 }}>
               {candidate.provenanceNote}
+            </p>
+          ) : null}
+          {!candidate?.provenanceNote && item.provenanceNote ? (
+            <p className="muted" style={{ margin: 0 }}>
+              {item.provenanceNote}
             </p>
           ) : null}
           {item.reasons.length > 0 ? (

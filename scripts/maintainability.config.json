@@ -1,6 +1,6 @@
 {
   "label": "tenra-scout",
-  "maxImplementationFileLines": 760,
+  "maxImplementationFileLines": 650,
   "maxStyleFileLines": 400,
   "maxAppShellLines": 350,
   "maxDesktopMainLines": 450,
@@ -15,13 +15,6 @@
     "apps/webapp/.next/static/chunks",
     "apps/webapp/.next/static/chunks/app"
   ],
-  "specificFileBudgets": {
-    "apps/webapp/src/components/ReportView.tsx": 850,
-    "apps/webapp/src/components/LeadDetailView.tsx": 825,
-    "apps/webapp/src/components/LeadInbox.tsx": 800,
-    "apps/webapp/src/components/OutreachWorkspace.tsx": 800,
-    "apps/webapp/src/lib/server/search/acquisition.ts": 1050
-  },
   "startupImportBans": [
     {
       "file": "apps/webapp/src/app/page.tsx",

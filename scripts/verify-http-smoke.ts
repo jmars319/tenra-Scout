@@ -19,52 +19,19 @@ import { getPostgresClient } from "../apps/webapp/src/lib/server/storage/postgre
 
 import { loadWorkspaceEnv, getRepoRoot } from "./lib/env.ts";
 import { applyScoutSchema, closeScoutSchemaClient } from "./lib/postgres.ts";
+import {
+  captureOutput,
+  delay,
+  formatLogs,
+  ManagedProcess,
+  PROCESS_EXIT_TIMEOUT_MS,
+  pushLog,
+  RUN_TIMEOUT_MS,
+  SMOKE_QUERY,
+  SUBMIT_RESPONSE_MAX_MS
+} from "./verify-http-smoke-helpers.ts";
 
 loadWorkspaceEnv();
-
-const SMOKE_QUERY = {
-  rawQuery: "dentists in Columbus, OH"
-};
-const SUBMIT_RESPONSE_MAX_MS = 8_000;
-const RUN_TIMEOUT_MS = 240_000;
-const PROCESS_EXIT_TIMEOUT_MS = 5_000;
-const RECENT_LOG_LINES = 80;
-
-interface ManagedProcess {
-  name: string;
-  child: ReturnType<typeof spawn>;
-  logs: string[];
-  exited: Promise<number | null>;
-}
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
-function pushLog(logs: string[], line: string): void {
-  if (!line) {
-    return;
-  }
-
-  logs.push(line);
-  if (logs.length > RECENT_LOG_LINES) {
-    logs.splice(0, logs.length - RECENT_LOG_LINES);
-  }
-}
-
-function captureOutput(processRef: ManagedProcess, source: "stdout" | "stderr", chunk: Buffer): void {
-  const lines = chunk
-    .toString("utf8")
-    .split(/\r?\n/)
-    .map((line) => line.trimEnd())
-    .filter(Boolean);
-
-  for (const line of lines) {
-    pushLog(processRef.logs, `[${processRef.name}:${source}] ${line}`);
-  }
-}
 
 function startManagedProcess(
   name: string,
@@ -120,18 +87,6 @@ async function stopManagedProcessInner(processRef: ManagedProcess): Promise<void
 
   processRef.child.kill("SIGKILL");
   await processRef.exited;
-}
-
-function formatLogs(processRef: ManagedProcess | null): string {
-  if (!processRef) {
-    return "(process was not started)";
-  }
-
-  if (processRef.logs.length === 0) {
-    return "(no output captured)";
-  }
-
-  return processRef.logs.join("\n");
 }
 
 async function getAvailablePort(): Promise<number> {

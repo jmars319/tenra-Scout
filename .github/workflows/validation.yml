@@ -34,6 +34,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Install Playwright browser
-        run: pnpm exec playwright install chromium
+        run: pnpm --filter @scout/webapp exec playwright install chromium
       - name: Run full verification
         run: pnpm run verify:all

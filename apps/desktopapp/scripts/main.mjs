@@ -21,7 +21,7 @@ import {
   maybeAutoCleanupInteractiveSearch
 } from "./lib/local-state.mjs";
 
-const appName = process.env.SCOUT_DESKTOP_APP_NAME || "tenra Scout";
+const appName = process.env.SCOUT_DESKTOP_APP_NAME || "Scout by Tenra";
 const verifyMode =
   process.argv.includes("--verify") || process.env.SCOUT_DESKTOP_VERIFY === "1";
 const packagedRuntimeVerifyMode = process.env.SCOUT_DESKTOP_RUNTIME_VERIFY === "1";

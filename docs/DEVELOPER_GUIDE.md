@@ -26,7 +26,7 @@
 `pnpm run package:desktop:release` requires Developer ID signing and Apple notarization credentials, then builds release-ready macOS artifacts.
 `pnpm run check:desktop-release-env` checks release signing and notarization prerequisites without running the expensive package build.
 `pnpm run qa:operator` prints the manual operator QA checklist and current local artifact/install status.
-`pnpm run install:desktop` packages Scout, installs `tenra Scout.app` into `/Applications`, and seeds the packaged desktop `.env` file if needed. It does not open Scout automatically.
+`pnpm run install:desktop` packages Scout, installs `Scout by Tenra.app` into `/Applications`, and seeds the packaged desktop `.env` file if needed. It does not open Scout automatically.
 `pnpm run launch:desktop` opens the installed Scout app from `/Applications` or falls back to the packaged build under `dist/desktop`.
 `pnpm run clean:local` prunes the desktop interactive-search browser caches without clearing the saved session.
 `pnpm run clean:local:full` removes the local interactive-search profile and local screenshot evidence without touching Postgres.
@@ -216,7 +216,7 @@ The shared local machine baseline includes a few tools that are useful in this r
   `APPLE_ID`/`APPLE_APP_SPECIFIC_PASSWORD`/`APPLE_TEAM_ID`,
   or `APPLE_KEYCHAIN_PROFILE`. After packaging, Scout verifies the built `.app` with `codesign` and `spctl`.
 - `pnpm run install:desktop`
-  Packages Scout, copies `tenra Scout.app` into `/Applications`, and seeds the packaged desktop env file without opening the app.
+  Packages Scout, copies `Scout by Tenra.app` into `/Applications`, and seeds the packaged desktop env file without opening the app.
 - `pnpm run launch:desktop`
   Opens the installed app from `/Applications` without rebuilding it.
 - `pnpm run dev:mobile`
@@ -228,7 +228,7 @@ Desktop stays product-primary while sharing the same runtime path as the local w
 
 - The packaged app still expects a reachable local Postgres service.
 - On first packaged launch, Scout now auto-creates:
-  `~/Library/Application Support/tenra Scout/.env`
+  `~/Library/Application Support/Scout by Tenra/.env`
   with `DATABASE_URL=postgresql:///scout` as the local default.
 - You can edit that file later if you need a different Postgres target or want to add `OPENAI_API_KEY`.
 - Desktop startup asks the packaged web runtime to connect to Postgres and apply the bundled Scout schema before opening the window. If local Postgres is not running or the `scout` database does not exist, the desktop shell fails with the env file path and a concrete database setup hint.

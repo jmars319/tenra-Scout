@@ -2,7 +2,7 @@
   "name": "@scout/desktopapp",
   "private": true,
   "version": "0.1.0",
-  "description": "Scout desktop shell for tenra's deterministic web presence market scanner.",
+  "description": "Desktop shell for Scout by Tenra's deterministic web presence market scanner.",
   "author": "tenra",
   "repository": {
     "type": "git",
@@ -38,7 +38,7 @@
   },
   "build": {
     "appId": "co.tenra.scout.desktop",
-    "productName": "tenra Scout",
+    "productName": "Scout by Tenra",
     "artifactName": "tenra-scout-${version}-${arch}.${ext}",
     "directories": {
       "output": "../../dist/desktop",

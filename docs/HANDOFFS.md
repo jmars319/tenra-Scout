@@ -1,6 +1,6 @@
-# tenra Scout Handoffs
+# Scout by Tenra Handoffs
 
-tenra Scout stays unique because live acquisition, audit evidence, worker execution, and operator shortlist review are a distinct product workflow.
+Scout by Tenra stays unique because live acquisition, audit evidence, worker execution, and operator shortlist review are a distinct product workflow.
 
 ## Produces
 

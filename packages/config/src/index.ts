@@ -1,6 +1,6 @@
 import type { OutreachLength, OutreachTone, ViewportKind } from "@scout/domain";
 
-export const APP_NAME = "tenra Scout";
+export const APP_NAME = "Scout by Tenra";
 export const DEFAULT_DATABASE_URL = "postgresql:///scout";
 
 export interface ViewportPreset {

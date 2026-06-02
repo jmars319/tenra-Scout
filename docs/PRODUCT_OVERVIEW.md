@@ -1,6 +1,6 @@
 # Product Overview
 
-tenra Scout is a search-seeded market scanner for business web presence.
+Scout by Tenra is a search-seeded market scanner for business web presence.
 
 The product loop is:
 

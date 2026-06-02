@@ -14,7 +14,7 @@ Runs as a complete lead discovery and opportunity review app with local lead inb
 
 ## Repository Path
 
-`business/acquisition/tenra Scout`
+`business/acquisition/Scout by Tenra`
 
 ## Accepted Inputs
 

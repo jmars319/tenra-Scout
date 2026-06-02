@@ -65,7 +65,7 @@ export function createBaseEnv(baseUrl, localState) {
     NEXT_PUBLIC_APP_URL: baseUrl,
     SCOUT_RUNTIME_ROOT: repoRoot,
     SCOUT_DESKTOP_URL: baseUrl,
-    SCOUT_DESKTOP_APP_NAME: "tenra Scout",
+    SCOUT_DESKTOP_APP_NAME: "Scout by Tenra",
     SCOUT_DESKTOP_ENV_FILE: path.resolve(repoRoot, ".env"),
     SCOUT_INTERACTIVE_SEARCH: "1",
     SCOUT_INTERACTIVE_SEARCH_PROFILE_DIR: localState.profileDir
@@ -269,7 +269,7 @@ export async function launchElectron(baseUrl, extraEnv = {}) {
   const electronEnv = {
     ...process.env,
     SCOUT_DESKTOP_URL: baseUrl,
-    SCOUT_DESKTOP_APP_NAME: "tenra Scout",
+    SCOUT_DESKTOP_APP_NAME: "Scout by Tenra",
     ...extraEnv
   };
   delete electronEnv.ELECTRON_RUN_AS_NODE;

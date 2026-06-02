@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 const desktopDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const repoRoot = path.resolve(desktopDir, "../..");
 
-export const appName = process.env.SCOUT_DESKTOP_APP_NAME || "tenra Scout";
+export const appName = process.env.SCOUT_DESKTOP_APP_NAME || "Scout by Tenra";
 const legacyAppNames = ["Tenra Scout"];
 export const userApplicationsDirPath = path.resolve(os.homedir(), "Applications");
 export const systemApplicationsDirPath = "/Applications";

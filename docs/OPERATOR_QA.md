@@ -6,8 +6,8 @@ Use this checklist before calling a local build beta-ready.
 
 1. Run `pnpm run package:desktop`.
 2. Run `pnpm run qa:desktop-install`.
-3. Confirm the QA app exists at `~/Applications/tenra Scout.app`. The normal `install:desktop` path is `/Applications/tenra Scout.app`.
-4. Confirm the desktop env file exists at `~/Library/Application Support/tenra Scout/.env`.
+3. Confirm the QA app exists at `~/Applications/Scout by Tenra.app`. The normal `install:desktop` path is `/Applications/Scout by Tenra.app`.
+4. Confirm the desktop env file exists at `~/Library/Application Support/Scout by Tenra/.env`.
 5. Confirm first launch reaches the Scout home screen without a database setup dialog.
 
 ## Scan Workflow

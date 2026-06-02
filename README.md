@@ -1,6 +1,6 @@
-# tenra Scout
+# Scout by Tenra
 
-tenra Scout is a local-first market scanner for finding, auditing, and classifying business web presences. It turns a narrow market query into a queued acquisition run, deterministic website audit, evidence set, and operator-readable opportunity report.
+Scout by Tenra is a local-first market scanner for finding, auditing, and classifying business web presences. It turns a narrow market query into a queued acquisition run, deterministic website audit, evidence set, and operator-readable opportunity report.
 
 Scout is not an SEO platform or a general crawler. The product shape is intentionally operational: define the market, run the scan, inspect evidence, and decide what outreach or follow-up is justified.
 

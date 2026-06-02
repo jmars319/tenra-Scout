@@ -36,8 +36,8 @@ if (buildConfig.appId !== "co.tenra.scout.desktop") {
   fail("Electron Builder appId is not the expected Scout bundle identifier.");
 }
 
-if (buildConfig.productName !== "tenra Scout") {
-  fail("Electron Builder productName is not tenra Scout.");
+if (buildConfig.productName !== "Scout by Tenra") {
+  fail("Electron Builder productName is not Scout by Tenra.");
 }
 
 if (buildConfig.asar !== true) {

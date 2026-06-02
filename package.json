@@ -71,5 +71,6 @@
     "globals": "^16.0.0",
     "typescript": "^5.9.0",
     "typescript-eslint": "^8.0.0"
-  }
+  },
+  "description": "Scout by Tenra is a market acquisition scanner for evidence-backed lead discovery and outreach handoffs."
 }

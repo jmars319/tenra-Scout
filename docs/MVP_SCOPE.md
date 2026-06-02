@@ -42,10 +42,10 @@
 - AI replacing deterministic checks
 - Heavy admin or dashboard surfaces
 - Fully self-contained local database packaging
-- Mobile runtime beyond scaffold verification
+- Mobile runtime beyond readiness verification
 - Fully automated lead enrichment from directories
 
-## Temporary Seams
+## Current Product Boundaries
 
 - Search verification provider
   A seeded provider exists for deterministic verification only. Normal product runs stay live-only and fail honestly when live acquisition returns no usable candidates.

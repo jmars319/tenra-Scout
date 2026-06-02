@@ -13,12 +13,27 @@ import type {
   LeadInboxItem,
   LeadStatus,
   OutreachDraft,
-  ScoutProxyHandoffReceipt,
   SearchCandidate
 } from "@scout/domain";
 import { Tag } from "@scout/ui";
-import { describeProxyReceipt } from "../lib/handoffs/proxy-receipt-copy";
 
+import {
+  buildCompletionChecklist,
+  buildMailtoHref,
+  buildTimeline,
+  endpointLabel,
+  ProxyReceiptSummary,
+  readEndpointConfig,
+  readErrorMessage,
+  resolveRecommendedChannel,
+  suiteEndpointPresets,
+  writeEndpointConfig,
+  type HandoffHealthResult,
+  type HandoffTarget,
+  type LeadAction,
+  type LeadMessage,
+  type ScoutEndpointConfig
+} from "./LeadDetailView.helpers";
 import {
   formatLeadUpdatedAt,
   humanizeLeadValue,
@@ -32,215 +47,6 @@ import {
   describeSampleQuality,
   toneForSampleQuality
 } from "./sample-quality-copy";
-
-type LeadAction = "analyze_contact" | "generate_draft" | "mark_contacted";
-type HandoffTarget = "assembly" | "proxy" | "guardrail";
-type ScoutEndpointConfig = Record<HandoffTarget, string>;
-type HandoffHealthResult = {
-  target: HandoffTarget;
-  ok: boolean;
-  endpoint?: string;
-  healthEndpoint?: string;
-  status: string | number;
-  message: string;
-};
-
-interface LeadMessage {
-  text: string;
-  tone: "neutral" | "good" | "danger";
-}
-
-interface LeadTimelineEntry {
-  label: string;
-  value: string;
-  detail: string;
-}
-
-const endpointStorageKey = "tenra-scout-suite-endpoints:v1";
-const defaultEndpointConfig: ScoutEndpointConfig = {
-  assembly: "",
-  proxy: "",
-  guardrail: ""
-};
-const suiteEndpointPresets: ScoutEndpointConfig = {
-  assembly: "http://localhost:3001/api/handoffs/scout-opportunity",
-  proxy: "http://localhost:5173/api/shape-external-output",
-  guardrail: "http://localhost:5174/api/external-reviews"
-};
-
-function isEndpointConfig(value: unknown): value is Partial<ScoutEndpointConfig> {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-
-  return (["assembly", "proxy", "guardrail"] as const).every((target) => {
-    const endpoint = (value as Partial<Record<HandoffTarget, unknown>>)[target];
-    return endpoint === undefined || typeof endpoint === "string";
-  });
-}
-
-function readEndpointConfig(): ScoutEndpointConfig {
-  if (typeof window === "undefined") {
-    return defaultEndpointConfig;
-  }
-
-  try {
-    const raw = window.localStorage.getItem(endpointStorageKey);
-    const parsed: unknown = raw ? JSON.parse(raw) : {};
-    return { ...defaultEndpointConfig, ...(isEndpointConfig(parsed) ? parsed : {}) };
-  } catch {
-    return defaultEndpointConfig;
-  }
-}
-
-function writeEndpointConfig(config: ScoutEndpointConfig) {
-  window.localStorage.setItem(endpointStorageKey, JSON.stringify(config));
-}
-
-function endpointLabel(endpoint: string): string {
-  try {
-    const url = new URL(endpoint);
-    return url.pathname;
-  } catch {
-    return endpoint;
-  }
-}
-
-function ProxyReceiptSummary({ receipt }: { receipt: ScoutProxyHandoffReceipt | undefined }) {
-  if (!receipt) {
-    return null;
-  }
-
-  return (
-    <div className="lead-receipt-summary">
-      <div className="tag-row">
-        {describeProxyReceipt(receipt).map((line) => (
-          <Tag key={line} tone={receipt.validationResult === "invalid" ? "warn" : "neutral"}>
-            {line}
-          </Tag>
-        ))}
-      </div>
-      {receipt.shapedOutputPreview ? (
-        <p className="muted">Preview: {receipt.shapedOutputPreview}</p>
-      ) : null}
-    </div>
-  );
-}
-
-function isClosed(state: LeadStatus): boolean {
-  return state === "dismissed" || state === "not_a_fit";
-}
-
-function buildTimeline(item: LeadInboxItem, draft?: OutreachDraft): LeadTimelineEntry[] {
-  const entries: LeadTimelineEntry[] = [
-    {
-      label: "Run created",
-      value: formatLeadUpdatedAt(item.runCreatedAt),
-      detail: item.rawQuery
-    },
-    {
-      label: "Lead tracked",
-      value: formatLeadUpdatedAt(item.annotation.createdAt),
-      detail: labelForLeadStatus(item.annotation.state)
-    },
-    {
-      label: "Lead updated",
-      value: formatLeadUpdatedAt(item.annotation.updatedAt),
-      detail: item.outreach.nextAction
-    }
-  ];
-
-  if (draft) {
-    entries.push({
-      label: "Outreach updated",
-      value: formatLeadUpdatedAt(draft.updatedAt),
-      detail: labelForLeadOutreachStatus(item.outreach.status)
-    });
-  }
-
-  if (item.annotation.followUpDate) {
-    entries.push({
-      label: "Next follow-up",
-      value: item.annotation.followUpDate,
-      detail: isClosed(item.annotation.state) ? "Closed lead" : "Scheduled follow-up"
-    });
-  }
-
-  return entries;
-}
-
-function resolveRecommendedChannel(draft?: OutreachDraft) {
-  if (!draft) {
-    return null;
-  }
-
-  if (draft.recommendedChannel) {
-    return (
-      draft.contactChannels.find((channel) => channel.kind === draft.recommendedChannel) ??
-      draft.contactChannels[0] ??
-      null
-    );
-  }
-
-  return draft.contactChannels[0] ?? null;
-}
-
-async function readErrorMessage(response: Response): Promise<string> {
-  try {
-    const body = (await response.json()) as { errorMessage?: string };
-    return body.errorMessage ?? "Scout could not update this lead.";
-  } catch {
-    return "Scout could not update this lead.";
-  }
-}
-
-function buildMailtoHref(draft: OutreachDraft | undefined): string | null {
-  const email = draft?.contactChannels.find((channel) => channel.kind === "email")?.value;
-
-  if (!email || !draft?.subjectLine.trim() || !draft.body.trim()) {
-    return null;
-  }
-
-  const params = new URLSearchParams({
-    subject: draft.subjectLine,
-    body: draft.body
-  });
-
-  return `mailto:${email}?${params.toString()}`;
-}
-
-function buildCompletionChecklist(item: LeadInboxItem, draft: OutreachDraft | undefined) {
-  return [
-    {
-      label: "Lead triaged",
-      complete: item.annotation.state !== "needs_review"
-    },
-    {
-      label: "Contact analyzed",
-      complete: Boolean(draft)
-    },
-    {
-      label: "Outreach draft ready",
-      complete: Boolean(draft?.body.trim() || draft?.shortMessage?.trim() || draft?.phoneTalkingPoints)
-    },
-    {
-      label: "Proxy receipt captured",
-      complete: item.handoffHistory.some((entry) => Boolean(entry.proxyReceipt))
-    },
-    {
-      label: "Guardrail review requested",
-      complete: item.handoffHistory.some((entry) => entry.target === "guardrail")
-    },
-    {
-      label: "Guardrail decision returned",
-      complete: item.handoffHistory.some((entry) => entry.mode === "decision-return")
-    },
-    {
-      label: "Operator contacted or closed",
-      complete: item.annotation.state === "contacted" || isClosed(item.annotation.state)
-    }
-  ];
-}
 
 export function LeadDetailView({
   initialItem,

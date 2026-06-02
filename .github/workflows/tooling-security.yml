@@ -12,6 +12,7 @@ permissions:
 jobs:
   just-security:
     runs-on: macos-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v6
       - name: Install tooling

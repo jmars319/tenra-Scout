@@ -220,7 +220,7 @@ The shared local machine baseline includes a few tools that are useful in this r
 - `pnpm run launch:desktop`
   Opens the installed app from `/Applications` without rebuilding it.
 - `pnpm run dev:mobile`
-  Mobile remains scaffold-only in v1 and currently prints a stable message.
+  Mobile remains a readiness surface and currently prints a stable message.
 
 Desktop stays product-primary while sharing the same runtime path as the local web app and worker. It should feel like a full operator program without introducing a second persistence model or a forked `input -> run -> report` workflow.
 

@@ -87,7 +87,7 @@ export default async function HomePage() {
               <Tag tone="warn">Not an AI-first app</Tag>
             </div>
             <p className="muted" style={{ margin: 0, lineHeight: 1.6 }}>
-              The MVP stays thin: one query, one run, one report. No dashboard sprawl, no outreach
+              Scout stays focused: one query, one run, one report. No dashboard sprawl, no outreach
               automation, no deep crawl, and no AI pretending to replace deterministic evidence.
               AI only helps draft grounded follow-up after Scout has already produced a local report.
             </p>

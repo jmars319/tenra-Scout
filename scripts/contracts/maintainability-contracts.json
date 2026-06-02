@@ -1,0 +1,262 @@
+{
+  "packageNames": [
+    {
+      "path": "apps/desktopapp/package.json",
+      "name": "@scout/desktopapp"
+    },
+    {
+      "path": "apps/mobileapp/package.json",
+      "name": "@scout/mobileapp"
+    },
+    {
+      "path": "apps/webapp/package.json",
+      "name": "@scout/webapp"
+    },
+    {
+      "path": "package.json",
+      "name": "tenra-scout"
+    },
+    {
+      "path": "packages/api-contracts/package.json",
+      "name": "@scout/api-contracts"
+    },
+    {
+      "path": "packages/auth/package.json",
+      "name": "@scout/auth"
+    },
+    {
+      "path": "packages/config/package.json",
+      "name": "@scout/config"
+    },
+    {
+      "path": "packages/domain/package.json",
+      "name": "@scout/domain"
+    },
+    {
+      "path": "packages/geo/package.json",
+      "name": "@scout/geo"
+    },
+    {
+      "path": "packages/privacy/package.json",
+      "name": "@scout/privacy"
+    },
+    {
+      "path": "packages/realtime/package.json",
+      "name": "@scout/realtime"
+    },
+    {
+      "path": "packages/shared-types/package.json",
+      "name": "@scout/shared-types"
+    },
+    {
+      "path": "packages/ui/package.json",
+      "name": "@scout/ui"
+    },
+    {
+      "path": "packages/validation/package.json",
+      "name": "@scout/validation"
+    }
+  ],
+  "packageExports": [
+    {
+      "path": "packages/api-contracts/src/index.ts",
+      "exports": [
+        "CreateManualLeadRequest",
+        "CreateManualLeadResponse",
+        "CreateOutreachDraftRequest",
+        "CreateScoutRunRequest",
+        "CreateScoutRunResponse",
+        "GetScoutRunResponse",
+        "LeadAnnotationResponse",
+        "LeadInboxActionRequest",
+        "LeadInboxBulkActionRequest",
+        "LeadInboxBulkActionResponse",
+        "LeadInboxItemResponse",
+        "ListLeadAnnotationsResponse",
+        "ListLeadInboxResponse",
+        "ListOutreachDraftsResponse",
+        "OutreachDraftResponse",
+        "OutreachProfileResponse",
+        "RunControlActionRequest",
+        "RunControlActionResponse",
+        "ScoutOpportunityHandoff",
+        "UpdateLeadAnnotationRequest",
+        "UpdateOutreachDraftRequest",
+        "UpdateOutreachProfileRequest",
+        "buildScoutOpportunityHandoff",
+        "createManualLeadRequestSchema",
+        "createManualLeadResponseSchema",
+        "createOutreachDraftRequestSchema",
+        "createScoutRunRequestSchema",
+        "createScoutRunResponseSchema",
+        "getScoutRunResponseSchema",
+        "leadAnnotationResponseSchema",
+        "leadInboxActionRequestSchema",
+        "leadInboxBulkActionRequestSchema",
+        "leadInboxBulkActionResponseSchema",
+        "leadInboxItemResponseSchema",
+        "listLeadAnnotationsResponseSchema",
+        "listLeadInboxResponseSchema",
+        "listOutreachDraftsResponseSchema",
+        "outreachDraftResponseSchema",
+        "outreachProfileResponseSchema",
+        "runControlActionRequestSchema",
+        "runControlActionResponseSchema",
+        "scoutOpportunityHandoffSchema",
+        "updateLeadAnnotationRequestSchema",
+        "updateOutreachDraftRequestSchema",
+        "updateOutreachProfileRequestSchema"
+      ]
+    },
+    {
+      "path": "packages/auth/src/index.ts",
+      "exports": [
+        "AUTH_STATUS",
+        "describeAuthStatus"
+      ]
+    },
+    {
+      "path": "packages/config/src/index.ts",
+      "exports": [
+        "APP_NAME",
+        "DEFAULT_DATABASE_URL",
+        "DatabaseConfig",
+        "EvidenceStorageConfig",
+        "InteractiveSearchConfig",
+        "OutreachConfig",
+        "ScoutLimits",
+        "SearchProviderName",
+        "VIEWPORT_PRESETS",
+        "ViewportPreset",
+        "WorkerConfig",
+        "getAppName",
+        "getDatabaseConfig",
+        "getEvidenceStorageConfig",
+        "getInteractiveSearchConfig",
+        "getOutreachConfig",
+        "getPublicAppUrl",
+        "getScoutLimits",
+        "getSearchProviderName",
+        "getWorkerConfig"
+      ]
+    },
+    {
+      "path": "packages/domain/src/index.ts",
+      "exports": [
+        "runScout"
+      ]
+    },
+    {
+      "path": "packages/geo/src/index.ts",
+      "exports": [
+        "NormalizedLocationHint",
+        "SCOUT_CITY_STATE_SUGGESTIONS",
+        "normalizeLocationHint",
+        "normalizeStructuredLocationInput",
+        "stripLocationHint"
+      ]
+    },
+    {
+      "path": "packages/privacy/src/index.ts",
+      "exports": [
+        "EvidencePathInput",
+        "buildEvidenceRelativePath",
+        "buildEvidenceUrlPath",
+        "buildRunFileName",
+        "sanitizePathSegment"
+      ]
+    },
+    {
+      "path": "packages/realtime/src/index.ts",
+      "exports": [
+        "REALTIME_STATUS",
+        "describeRealtimeStatus"
+      ]
+    },
+    {
+      "path": "packages/shared-types/src/index.ts",
+      "exports": [
+        "JsonObject",
+        "JsonPrimitive",
+        "JsonValue",
+        "Maybe",
+        "ValueOf"
+      ]
+    },
+    {
+      "path": "packages/validation/src/index.ts",
+      "exports": [
+        "acquisitionDiagnosticsSchema",
+        "acquisitionDiscardRecordSchema",
+        "acquisitionDuplicateRecordSchema",
+        "acquisitionFallbackTriggerSchema",
+        "acquisitionProviderAttemptSchema",
+        "acquisitionQueryVariantSchema",
+        "acquisitionSourceCountSchema",
+        "auditFindingSchema",
+        "businessBreakdownSchema",
+        "businessClassificationSchema",
+        "followUpDateSchema",
+        "leadAnnotationSchema",
+        "leadInboxItemSchema",
+        "leadOpportunitySchema",
+        "leadOutreachSummarySchema",
+        "outreachDraftSchema",
+        "outreachProfileSchema",
+        "persistedRunBusinessResultsSchema",
+        "persistedRunRecordSchema",
+        "persistenceMetadataSchema",
+        "presenceRecordSchema",
+        "resolvedMarketIntentSchema",
+        "runExecutionSchema",
+        "scoutHandoffHistoryEntrySchema",
+        "scoutProxyHandoffReceiptSchema",
+        "scoutQueryInputSchema",
+        "scoutRunInputSchema",
+        "scoutRunReportSchema",
+        "scoutRunSummarySchema",
+        "searchCandidateSchema"
+      ]
+    }
+  ],
+  "appRoutes": [
+    "/",
+    "api/desktop/readiness",
+    "api/evidence/[...segments]",
+    "api/handoffs/deliver/[runId]/[candidateId]",
+    "api/handoffs/guardrail-decision/[runId]/[candidateId]",
+    "api/handoffs/health",
+    "api/handoffs/opportunity/[runId]/[candidateId]",
+    "api/handoffs/proxy-shape/[runId]/[candidateId]",
+    "api/health",
+    "api/leads",
+    "api/leads/[runId]/[candidateId]/actions",
+    "api/leads/bulk-actions",
+    "api/leads/export",
+    "api/leads/manual",
+    "api/operator/readiness",
+    "api/runs/[runId]",
+    "api/runs/[runId]/actions",
+    "api/runs/[runId]/candidates",
+    "api/runs/[runId]/leads",
+    "api/runs/[runId]/leads/[candidateId]",
+    "api/runs/[runId]/leads/[candidateId]/export",
+    "api/runs/[runId]/leads/export",
+    "api/runs/[runId]/outreach",
+    "api/runs/[runId]/outreach/[candidateId]",
+    "api/scout/run",
+    "api/settings/outreach-profile",
+    "leads",
+    "leads/[runId]/[candidateId]",
+    "runs",
+    "runs/[runId]",
+    "settings"
+  ],
+  "desktopMenuLabels": [
+    "Close Window",
+    "Edit",
+    "Quit",
+    "Settings...",
+    "Window"
+  ]
+}

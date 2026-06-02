@@ -1,0 +1,370 @@
+.saved-markets {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.85rem;
+}
+
+.saved-market-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.saved-market-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.65rem;
+  justify-items: end;
+  min-width: 0;
+}
+
+.comparison-metric-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.run-control-actions,
+.run-status-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.run-control-actions {
+  flex-direction: column;
+}
+
+button[disabled] {
+  opacity: 0.68;
+  cursor: wait;
+}
+
+.lead-triage,
+.lead-triage-list,
+.lead-inbox,
+.lead-inbox-list,
+.lead-pipeline-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.lead-pipeline-board {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.lead-pipeline-column {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.lead-pipeline-column-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.lead-pipeline-column-head p {
+  margin: 0.25rem 0 0;
+  line-height: 1.45;
+}
+
+.lead-pipeline-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.65rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lead-pipeline-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.45rem;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--line);
+  min-width: 0;
+}
+
+.lead-triage-toolbar,
+.lead-triage-card-head,
+.lead-triage-save-row,
+.lead-inbox-toolbar,
+.lead-inbox-card-head,
+.lead-inbox-save-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.lead-triage-actions,
+.lead-inbox-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.lead-inbox-bulk-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.7rem;
+  padding: 0.8rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  min-width: 0;
+}
+
+.lead-next-up {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  min-width: 0;
+}
+
+.lead-next-up-title {
+  margin-top: 0.45rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.operator-readiness {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.operator-readiness-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.operator-readiness-card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  min-width: 0;
+}
+
+.operator-readiness-card p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.operator-readiness-evidence {
+  display: grid;
+  gap: 0.2rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  overflow-wrap: anywhere;
+}
+
+.lead-inbox-selection-summary,
+.lead-select-title,
+.lead-select-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.lead-select-title {
+  align-items: flex-start;
+}
+
+.lead-select-row {
+  font-weight: 700;
+}
+
+.lead-select-row input,
+.lead-select-title input {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  margin-top: 0.12rem;
+}
+
+.bulk-date-input {
+  max-width: 12rem;
+}
+
+.lead-detail-hero,
+.lead-detail-section {
+  min-width: 0;
+}
+
+.lead-detail-title,
+.lead-detail-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.lead-detail-title h2 {
+  margin: 0.2rem 0;
+  font-size: 1.45rem;
+}
+
+.lead-detail-actions {
+  justify-content: flex-start;
+}
+
+.lead-detail-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.85rem;
+}
+
+.lead-timeline {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.7rem;
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.lead-timeline li {
+  padding-left: 0.2rem;
+}
+
+.lead-timeline span {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--muted);
+}
+
+.lead-detail-pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-strong);
+  color: var(--text);
+  font: inherit;
+  line-height: 1.6;
+}
+
+.lead-triage-list,
+.lead-inbox-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lead-triage-card,
+.lead-inbox-card {
+  gap: 0.85rem;
+}
+
+.lead-triage-title,
+.lead-inbox-title {
+  display: grid;
+  gap: 0.25rem;
+  min-width: min(100%, 22rem);
+}
+
+.lead-inbox-search {
+  display: grid;
+  grid-template-columns: minmax(16rem, 1fr) minmax(0, auto);
+  gap: 0.7rem;
+  align-items: center;
+  min-width: 0;
+}
+
+.lead-inbox-meta {
+  display: grid;
+  grid-template-columns: minmax(14rem, 0.7fr) minmax(0, 1fr);
+  gap: 0.8rem;
+  align-items: start;
+  min-width: 0;
+}
+
+.lead-inbox-outreach {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  min-width: 0;
+}
+
+.manual-lead-entry {
+  display: grid;
+  gap: 1rem;
+}
+
+.manual-lead-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.manual-lead-notes {
+  grid-column: span 2;
+}
+
+.manual-lead-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.lead-triage-controls,
+.lead-inbox-controls {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.8fr) minmax(10rem, 0.6fr);
+  gap: 0.7rem;
+  align-items: end;
+  min-width: 0;
+}
+
+.lead-note-textarea {
+  min-height: 7rem;
+}
+
+.note-list {
+  margin: 0;
+  padding-left: 1rem;
+  color: var(--muted);
+  line-height: 1.65;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+

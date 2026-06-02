@@ -8,6 +8,7 @@ on:
 jobs:
   validate:
     runs-on: macos-latest
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v5
@@ -18,9 +19,5 @@ jobs:
         run: corepack enable
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Check suite handoff contract conformance
-        run: node scripts/generate-handoff-registry.mjs --check
-      - name: Validate handoff fixtures
-        run: pnpm run verify:handoffs
-      - name: Run typecheck
-        run: pnpm run typecheck
+      - name: Run full verification
+        run: pnpm run verify:all

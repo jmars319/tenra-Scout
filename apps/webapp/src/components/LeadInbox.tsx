@@ -12,6 +12,24 @@ import type { LeadInboxItem, LeadStatus } from "@scout/domain";
 import { Tag } from "@scout/ui";
 
 import {
+  buildExportHref,
+  dueLabel,
+  filterOptions,
+  isClosed,
+  isDue,
+  isReady,
+  matchesFilter,
+  matchesSearch,
+  needsDraft,
+  readErrorMessage,
+  sortLeadInboxItems,
+  updatedAgeLabel,
+  type LeadAction,
+  type LeadBulkAction,
+  type LeadInboxFilter,
+  type LeadMessage
+} from "./LeadInbox.helpers";
+import {
   formatLeadUpdatedAt,
   humanizeLeadValue,
   labelForLeadOutreachStatus,
@@ -24,204 +42,6 @@ import {
   describeSampleQuality,
   toneForSampleQuality
 } from "./sample-quality-copy";
-
-type LeadInboxFilter =
-  | "all"
-  | "open"
-  | "needs_draft"
-  | "ready"
-  | "saved"
-  | "contacted"
-  | "closed"
-  | "due";
-type LeadBulkAction = "mark_contacted" | "dismiss" | "mark_not_a_fit" | "set_follow_up";
-
-interface LeadMessage {
-  text: string;
-  tone: "neutral" | "good" | "danger";
-}
-
-const filterOptions: Array<{ value: LeadInboxFilter; label: string }> = [
-  { value: "all", label: "All" },
-  { value: "due", label: "Due" },
-  { value: "open", label: "Open" },
-  { value: "needs_draft", label: "Needs Draft" },
-  { value: "ready", label: "Ready" },
-  { value: "saved", label: "Saved" },
-  { value: "contacted", label: "Contacted" },
-  { value: "closed", label: "Closed" }
-];
-
-type LeadAction = "analyze_contact" | "generate_draft" | "mark_contacted";
-const MS_PER_DAY = 24 * 60 * 60 * 1000;
-
-function isClosed(state: LeadStatus): boolean {
-  return state === "dismissed" || state === "not_a_fit";
-}
-
-function isDue(item: LeadInboxItem, today: string): boolean {
-  return Boolean(
-    item.annotation.followUpDate &&
-      item.annotation.followUpDate <= today &&
-      !isClosed(item.annotation.state)
-  );
-}
-
-function isReady(item: LeadInboxItem): boolean {
-  return item.outreach.status === "draft_ready" || item.outreach.status === "edited_saved";
-}
-
-function needsDraft(item: LeadInboxItem): boolean {
-  return (
-    !isClosed(item.annotation.state) &&
-    item.annotation.state !== "contacted" &&
-    !isReady(item)
-  );
-}
-
-function dayValue(value: string | undefined): number {
-  if (!value) {
-    return Number.POSITIVE_INFINITY;
-  }
-
-  return Date.parse(`${value.slice(0, 10)}T00:00:00.000Z`);
-}
-
-function daysSince(value: string, today: string): number {
-  return Math.max(0, Math.floor((dayValue(today) - dayValue(value)) / MS_PER_DAY));
-}
-
-function updatedAgeLabel(item: LeadInboxItem, today: string): string {
-  const age = daysSince(item.annotation.updatedAt, today);
-
-  if (age === 0) {
-    return "Updated today";
-  }
-
-  return `Updated ${age}d ago`;
-}
-
-function urgencyRank(item: LeadInboxItem, today: string): number {
-  if (isDue(item, today)) {
-    return 0;
-  }
-
-  if (isReady(item) && item.annotation.state !== "contacted") {
-    return 1;
-  }
-
-  if (needsDraft(item)) {
-    return 2;
-  }
-
-  if (item.annotation.state === "contacted") {
-    return 3;
-  }
-
-  if (item.annotation.state === "saved") {
-    return 4;
-  }
-
-  return 5;
-}
-
-function sortLeadInboxItems(left: LeadInboxItem, right: LeadInboxItem, today: string): number {
-  return (
-    urgencyRank(left, today) - urgencyRank(right, today) ||
-    dayValue(left.annotation.followUpDate) - dayValue(right.annotation.followUpDate) ||
-    (right.priorityScore ?? 0) - (left.priorityScore ?? 0) ||
-    right.annotation.updatedAt.localeCompare(left.annotation.updatedAt)
-  );
-}
-
-function matchesFilter(item: LeadInboxItem, filter: LeadInboxFilter, today: string): boolean {
-  if (filter === "all") {
-    return true;
-  }
-
-  if (filter === "open") {
-    return item.annotation.state === "needs_review";
-  }
-
-  if (filter === "needs_draft") {
-    return needsDraft(item);
-  }
-
-  if (filter === "ready") {
-    return (
-      !isClosed(item.annotation.state) &&
-      item.annotation.state !== "contacted" &&
-      isReady(item)
-    );
-  }
-
-  if (filter === "closed") {
-    return isClosed(item.annotation.state);
-  }
-
-  if (filter === "due") {
-    return isDue(item, today);
-  }
-
-  return item.annotation.state === filter;
-}
-
-function dueLabel(item: LeadInboxItem, today: string): string {
-  if (!item.annotation.followUpDate) {
-    return "Due";
-  }
-
-  if (item.annotation.followUpDate < today) {
-    return "Overdue";
-  }
-
-  return "Due Today";
-}
-
-function matchesSearch(item: LeadInboxItem, query: string): boolean {
-  const search = query.trim().toLowerCase();
-
-  if (!search) {
-    return true;
-  }
-
-  return [
-    item.businessName,
-    item.primaryUrl,
-    item.rawQuery,
-    item.marketTerm,
-    item.locationLabel ?? "",
-    item.annotation.operatorNote,
-    ...item.reasons
-  ]
-    .join(" ")
-    .toLowerCase()
-    .includes(search);
-}
-
-function buildExportHref(format: "csv" | "markdown", filter: LeadInboxFilter, query: string): string {
-  const params = new URLSearchParams({ format });
-  const trimmed = query.trim();
-
-  if (filter !== "all") {
-    params.set("filter", filter);
-  }
-
-  if (trimmed) {
-    params.set("q", trimmed);
-  }
-
-  return `/api/leads/export?${params.toString()}`;
-}
-
-async function readErrorMessage(response: Response): Promise<string> {
-  try {
-    const body = (await response.json()) as { errorMessage?: string };
-    return body.errorMessage ?? "Scout could not update this lead.";
-  } catch {
-    return "Scout could not update this lead.";
-  }
-}
 
 export function LeadInbox({
   initialItems,

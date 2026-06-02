@@ -1,0 +1,144 @@
+@media (max-width: 820px) {
+  .candidate-review-fields,
+  .candidate-review-row,
+  .sample-decision-grid,
+  .lead-triage-controls,
+  .lead-inbox-search,
+  .lead-inbox-meta,
+  .lead-inbox-outreach,
+  .lead-inbox-controls,
+  .manual-lead-grid,
+  .lead-pipeline-board,
+  .comparison-metric-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .manual-lead-notes {
+    grid-column: span 1;
+  }
+
+  .candidate-review-actions,
+  .lead-triage-actions,
+  .lead-inbox-actions {
+    justify-content: flex-start;
+  }
+
+  .lead-next-up {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .saved-market-actions {
+    justify-items: start;
+  }
+
+  .lead-inbox-selection-summary {
+    flex-wrap: wrap;
+  }
+
+  .bulk-date-input {
+    max-width: none;
+  }
+}
+
+.finding-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.finding-table th,
+.finding-table td {
+  text-align: left;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+  hyphens: auto;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.finding-table th {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.finding-table td {
+  font-size: 0.95rem;
+}
+
+.evidence-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  min-width: 0;
+}
+
+.evidence-card {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.evidence-card img {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+}
+
+.inline-link {
+  display: inline-block;
+  max-width: 100%;
+  color: var(--accent);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.inline-link:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--accent-soft);
+}
+
+.inline-link:hover,
+.link-button:hover,
+.run-form button:hover,
+.secondary-button:hover,
+.example-list button:hover {
+  opacity: 0.92;
+}
+
+details {
+  border-top: 1px solid var(--line);
+  min-width: 0;
+  padding-top: 0.8rem;
+}
+
+.scout-shell > *,
+.scout-grid > *,
+.report-list > *,
+.issue-list > *,
+.shortlist > *,
+.section-stack > *,
+.evidence-grid > *,
+details > *,
+.finding-table td > *,
+.finding-table th > * {
+  min-width: 0;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.error-banner {
+  border: 1px solid var(--error-line);
+  background: var(--error-bg);
+  color: var(--error-ink);
+  border-radius: 18px;
+  padding: 1rem;
+}
+

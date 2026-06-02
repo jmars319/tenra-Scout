@@ -1,0 +1,46 @@
+{
+  "label": "tenra-scout",
+  "maxImplementationFileLines": 760,
+  "maxStyleFileLines": 400,
+  "maxAppShellLines": 350,
+  "maxDesktopMainLines": 450,
+  "maxDomainBarrelLines": 425,
+  "nearBudgetMarginLines": 25,
+  "nearBudgetMarginKb": 4,
+  "initialBundleBudgetKb": 325,
+  "requireBuiltAssets": true,
+  "ignoredSegments": [],
+  "contractSnapshotPath": "scripts/contracts/maintainability-contracts.json",
+  "assetDirs": [
+    "apps/webapp/.next/static/chunks",
+    "apps/webapp/.next/static/chunks/app"
+  ],
+  "specificFileBudgets": {
+    "apps/webapp/src/components/ReportView.tsx": 850,
+    "apps/webapp/src/components/LeadDetailView.tsx": 825,
+    "apps/webapp/src/components/LeadInbox.tsx": 800,
+    "apps/webapp/src/components/OutreachWorkspace.tsx": 800,
+    "apps/webapp/src/lib/server/search/acquisition.ts": 1050
+  },
+  "startupImportBans": [
+    {
+      "file": "apps/webapp/src/app/page.tsx",
+      "bannedPatterns": [
+        ".next/",
+        ".desktop-runtime/"
+      ]
+    }
+  ],
+  "allowedGenerated": [
+    "src/vite-env.d.ts",
+    "src/atlasDesktop.d.ts",
+    "src/marketDeskDesktop.d.ts",
+    "apps/webapp/next-env.d.ts",
+    "apps/desktopapp/src/vite-env.d.ts",
+    "apps/webapp/src/vite-env.d.ts",
+    "apps/desktop/src/vite-env.d.ts"
+  ],
+  "ignoredPathIncludes": [
+    "apps/desktopapp/.desktop-runtime"
+  ]
+}

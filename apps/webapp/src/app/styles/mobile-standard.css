@@ -1,0 +1,130 @@
+@media (max-width: 640px) {
+  .run-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .report-overview-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .report-overview-grid > :last-child {
+    grid-column: auto;
+  }
+
+  .header-actions,
+  .theme-toggle-shell,
+  .theme-toggle,
+  .app-nav,
+  .app-nav-cluster,
+  .app-nav-meta {
+    width: 100%;
+  }
+
+  .header-actions {
+    justify-content: stretch;
+  }
+
+  .app-nav,
+  .app-nav-cluster,
+  .app-nav-meta {
+    justify-content: stretch;
+  }
+
+  .app-nav-link {
+    flex: 1 1 0;
+  }
+
+  .theme-toggle {
+    justify-content: space-between;
+  }
+
+  .outreach-banner {
+    flex-direction: column;
+  }
+
+  .outreach-card-side,
+  .outreach-card-toggle {
+    width: 100%;
+  }
+
+  .outreach-card-side {
+    justify-items: stretch;
+  }
+
+  .finding-table,
+  .finding-table tbody,
+  .finding-table tr,
+  .finding-table td {
+    display: block;
+  }
+
+  .finding-table thead {
+    display: none;
+  }
+
+  .finding-table tr {
+    padding: 0.85rem 0;
+  }
+}
+
+/* JAMARQ/Tenra visual standard */
+:root {
+  color-scheme: dark;
+  --jamarq-canvas: #0D0D0F;
+  --jamarq-surface: #1E1E22;
+  --jamarq-surface-raised: #2C2C30;
+  --jamarq-text: #f2f2f5;
+  --jamarq-muted: #A0A0A0;
+  --jamarq-accent: #09A6D6;
+  --jamarq-border: rgba(242, 242, 245, 0.14);
+}
+
+html,
+body,
+#root {
+  background: var(--jamarq-canvas);
+  color: var(--jamarq-text);
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(9, 166, 214, 0.16), transparent 34rem),
+    var(--jamarq-canvas);
+}
+
+button,
+input,
+select,
+textarea {
+  border-color: var(--jamarq-border);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--jamarq-accent);
+  outline-offset: 2px;
+}
+
+[class*="panel"],
+[class*="card"],
+[class*="tile"],
+[class*="surface"] {
+  border-color: var(--jamarq-border);
+  background-color: var(--jamarq-surface);
+}
+
+[class*="sidebar"],
+[class*="rail"] {
+  border-color: var(--jamarq-border);
+  background: rgba(13, 13, 15, 0.92);
+}
+
+[class*="muted"],
+[class*="meta"],
+[class*="description"],
+[class*="summary"] {
+  color: var(--jamarq-muted);
+}

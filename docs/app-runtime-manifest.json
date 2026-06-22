@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "appId": "tenra-scout",
+  "displayName": "Scout by Tenra",
+  "productLine": "Tenra Research Suite",
+  "runtime": {
+    "primaryMode": "standalone-local-first-acquisition-workbench",
+    "uiShell": "electron-managed-next-webapp-and-worker",
+    "launch": [
+      "Scout by Tenra.app",
+      "pnpm run dev:desktop",
+      "pnpm run dev:all"
+    ],
+    "health": [
+      "GET /api/health",
+      "GET /api/operator/readiness",
+      "GET /api/desktop/readiness",
+      "GET /api/handoffs/health"
+    ],
+    "degradedStates": [
+      "local Postgres service or scout database is unavailable",
+      "worker heartbeat is stale or missing",
+      "evidence directory is not writable",
+      "optional AI or handoff endpoint is unavailable",
+      "provider mode is seeded or preview-only"
+    ]
+  },
+  "capabilities": [
+    "market.acquisition-runs",
+    "postgres.run-queue",
+    "worker.execution",
+    "local.evidence-storage",
+    "opportunity.handoff",
+    "outreach.draft-assist",
+    "desktop.runtime-supervision"
+  ],
+  "storage": {
+    "records": [
+      "Postgres scout_runs queue and run repository records",
+      "Postgres outreach draft records",
+      "legacy local JSON runs for explicit import compatibility"
+    ],
+    "secrets": [
+      "DATABASE_URL in local env or packaged desktop env file",
+      "optional OpenAI or provider credentials in backend environment"
+    ],
+    "logs": [
+      "desktop web and worker process output",
+      "operator QA and packaged runtime verification output"
+    ],
+    "exports": [
+      "opportunity handoff JSON",
+      "lead export data",
+      "local screenshot evidence files"
+    ]
+  },
+  "integrations": {
+    "inbound": [
+      "bounded acquisition provider adapters",
+      "Proxy shaping endpoint configuration",
+      "Guardrail decision callback responses",
+      "legacy local JSON run imports"
+    ],
+    "outbound": [
+      "tenra-scout.opportunity-handoff.v1",
+      "Proxy shaped-output delivery receipts",
+      "Guardrail external-action review requests",
+      "lead and evidence exports"
+    ],
+    "discovery": [
+      "docs/app-runtime-manifest.json",
+      "GET /api/operator/readiness",
+      "GET /api/handoffs/health",
+      "docs/HANDOFF_REGISTRY.md"
+    ]
+  },
+  "security": {
+    "networkPolicy": "desktop runtime binds local web and worker services to loopback and uses bounded provider adapters instead of open crawling",
+    "sensitiveActions": [
+      "outreach remains operator-reviewed",
+      "AI assistance must be grounded in stored Scout evidence",
+      "handoff delivery records receipts instead of silently mutating sibling apps"
+    ]
+  }
+}

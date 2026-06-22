@@ -24,6 +24,8 @@ import { buildLeadPackMarkdown } from "./lead-pack-export.ts";
 export type LeadExportFormat = "csv" | "markdown";
 export type LeadPackExportFormat = "json" | "markdown";
 
+/* Lead row contract */
+
 interface LeadExportRow {
   candidateId: string;
   businessName: string;
@@ -95,6 +97,8 @@ function hasDraftContent(draft: OutreachDraft): boolean {
       draft.phoneTalkingPoints
   );
 }
+
+/* Lead row mapping boundary */
 
 function buildOutreachSummary(
   annotation: Pick<LeadAnnotation, "state">,
@@ -239,6 +243,8 @@ function buildRowSource(
   };
 }
 
+/* Run file contract */
+
 function buildCsv(rows: LeadExportRow[]): string {
   const headers = [
     "business_name",
@@ -339,6 +345,8 @@ function buildMarkdown(report: ScoutRunReport, rows: LeadExportRow[], generatedA
     .join("\n")
     .trim();
 }
+
+/* Inbox file contract */
 
 function buildInboxCsv(items: LeadInboxItem[]): string {
   const headers = [
@@ -449,6 +457,8 @@ function buildInboxMarkdown(items: LeadInboxItem[], generatedAt: string): string
     .trim();
 }
 
+
+/* Download API boundary */
 
 export async function buildLeadExport(input: {
   runId: string;

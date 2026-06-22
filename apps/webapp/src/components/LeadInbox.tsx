@@ -53,6 +53,8 @@ export function LeadInbox({
   const [bulkFollowUpDate, setBulkFollowUpDate] = useState(today);
   const [bulkMessage, setBulkMessage] = useState<LeadMessage | null>(null);
 
+  /* Inbox summary boundary */
+
   const counts = useMemo(() => {
     return {
       total: items.length,
@@ -70,6 +72,8 @@ export function LeadInbox({
       closed: items.filter((item) => isClosed(item.annotation.state)).length
     };
   }, [items, today]);
+
+  /* Visible queue boundary */
 
   const visibleItems = useMemo(
     () => {
@@ -97,6 +101,8 @@ export function LeadInbox({
   );
   const selectedVisibleCount = visibleKeys.filter((key) => selectedKeys.has(key)).length;
   const allVisibleSelected = visibleKeys.length > 0 && selectedVisibleCount === visibleKeys.length;
+
+  /* Selection workflow boundary */
 
   function updateLead(
     item: LeadInboxItem,
@@ -170,6 +176,8 @@ export function LeadInbox({
     setSelectedKeys(new Set());
   }
 
+  /* Persistence action boundary */
+
   async function saveLead(item: LeadInboxItem) {
     const itemKey = `${item.runId}:${item.candidateId}`;
     const actionKey = `${itemKey}:save`;
@@ -222,6 +230,8 @@ export function LeadInbox({
     }));
     setPendingKey(null);
   }
+
+  /* Bulk action boundary */
 
   async function runBulkAction(action: LeadBulkAction) {
     if (pendingKey || selectedItems.length === 0) {
@@ -338,6 +348,8 @@ export function LeadInbox({
     }));
     setPendingKey(null);
   }
+
+  /* Inbox layout boundary */
 
   return (
     <div className="lead-inbox">

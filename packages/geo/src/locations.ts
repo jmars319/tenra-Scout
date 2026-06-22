@@ -1,3 +1,5 @@
+// State lookup contract
+
 export const STATE_NAME_TO_CODE = new Map<string, string>([
   ["alabama", "AL"],
   ["alaska", "AK"],
@@ -51,6 +53,8 @@ export const STATE_NAME_TO_CODE = new Map<string, string>([
   ["wisconsin", "WI"],
   ["wyoming", "WY"]
 ]);
+
+// North Carolina location boundary
 
 const NORTH_CAROLINA_CITY_STATE_SUGGESTIONS = [
   "Aberdeen, NC",
@@ -207,6 +211,8 @@ const NORTH_CAROLINA_CITY_STATE_SUGGESTIONS = [
   "Zebulon, NC"
 ] as const;
 
+// National location boundary
+
 const MAJOR_US_CITY_STATE_SUGGESTIONS = [
   "Akron, OH",
   "Albuquerque, NM",
@@ -342,6 +348,8 @@ const MAJOR_US_CITY_STATE_SUGGESTIONS = [
   "Worcester, MA",
   "Yonkers, NY"
 ] as const;
+
+// Suggestion merge boundary
 
 export const SCOUT_CITY_STATE_SUGGESTIONS = [
   ...new Set([

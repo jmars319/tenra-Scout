@@ -13,6 +13,8 @@ import {
   toneForLeadStatus
 } from "./lead-workflow-copy";
 
+/* Triage item contract */
+
 export interface LeadTriageItem {
   candidateId: string;
   businessName: string;
@@ -108,6 +110,8 @@ export function LeadTriagePanel({
   const [pendingCandidateId, setPendingCandidateId] = useState<string | null>(null);
   const [messageByCandidate, setMessageByCandidate] = useState<Record<string, LeadMessage>>({});
 
+  /* Triage state boundary */
+
   const counts = useMemo(() => {
     const next = Object.fromEntries(
       statusOptions.map((option) => [option.value, 0])
@@ -132,6 +136,8 @@ export function LeadTriagePanel({
       }),
     [annotationsByCandidate, filter, items, messageByCandidate]
   );
+
+  /* Annotation save boundary */
 
   function updateAnnotation(
     candidateId: string,
@@ -205,6 +211,8 @@ export function LeadTriagePanel({
     }));
     setPendingCandidateId(null);
   }
+
+  /* Triage layout boundary */
 
   return (
     <div className="lead-triage">

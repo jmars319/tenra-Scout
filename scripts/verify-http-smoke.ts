@@ -414,6 +414,7 @@ function createProcessEnv(baseUrl: string): Record<string, string> {
   };
 }
 
+/* Smoke orchestration boundary */
 async function main(): Promise<void> {
   if (!process.env.DATABASE_URL) {
     throw new Error("DATABASE_URL is required for verify:http-smoke.");

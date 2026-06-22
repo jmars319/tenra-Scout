@@ -74,6 +74,8 @@ export function ReportView({
   const candidatesById = new Map(report.candidates.map((candidate) => [candidate.candidateId, candidate]));
   const leadTriageItems = buildLeadTriageItems(report, leadAnnotations);
 
+  /* Report layout boundary */
+
   return (
     <div className="scout-shell">
       {report.status === "failed" ? (
@@ -108,6 +110,7 @@ export function ReportView({
       <MarketComparisonPanel marketComparison={marketComparison} />
 
       <div className="scout-grid report-overview-grid">
+        {/* Market summary boundary */}
         <Panel title="Market Summary">
           <div className="tag-row" style={{ marginBottom: "0.9rem" }}>
             <Tag tone="good">{describeProviderName(report.searchSource)}</Tag>
@@ -157,6 +160,7 @@ export function ReportView({
           </div>
         </Panel>
 
+        {/* Acquisition evidence boundary */}
         <Panel title="Acquisition">
           <div className="tag-row" style={{ marginBottom: "0.9rem" }}>
             <Tag tone={toneForAcquisitionTrust(report)}>
@@ -349,6 +353,7 @@ export function ReportView({
         </Panel>
       ) : null}
 
+      {/* Shortlist workflow boundary */}
       <Panel
         title="Shortlist"
         description="Highest-priority business opportunities ranked from Scout's deterministic presence and audit rules. Directory and marketplace pages stay below in the full market picture."
@@ -424,6 +429,7 @@ export function ReportView({
         <LeadTriagePanel items={leadTriageItems} runId={report.runId} />
       </Panel>
 
+      {/* Outreach workspace boundary */}
       <div id="outreach-workspace">
         <Panel
           title="Outreach Workspace"

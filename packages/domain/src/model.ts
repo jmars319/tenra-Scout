@@ -1,3 +1,5 @@
+// Domain enum contract
+
 export const presenceTypes = [
   "owned_website",
   "facebook_only",
@@ -126,6 +128,8 @@ export type AcquisitionSourceKind = (typeof acquisitionSourceKinds)[number];
 export type CandidateProvenanceKind = (typeof candidateProvenanceKinds)[number];
 export type AcquisitionFallbackTriggerReason = (typeof acquisitionFallbackTriggerReasons)[number];
 
+// Query intent contract
+
 export interface ScoutQueryInput {
   rawQuery: string;
 }
@@ -153,6 +157,8 @@ export interface SearchCandidate {
   provenanceNote?: string | undefined;
   extractedFromCandidateId?: string | undefined;
 }
+
+// Acquisition diagnostics contract
 
 export interface AcquisitionQueryVariant {
   label: string;
@@ -226,6 +232,8 @@ export interface ScoutAcquisitionResult {
   diagnostics: AcquisitionDiagnostics;
 }
 
+// Presence audit contract
+
 export interface PresenceRecord {
   candidateId: string;
   businessName: string;
@@ -273,6 +281,8 @@ export interface BusinessClassification {
   confidence: ConfidenceLevel;
   rationale: string[];
 }
+
+// Lead workflow contract
 
 export interface LeadOpportunity {
   candidateId: string;
@@ -357,6 +367,8 @@ export interface LeadInboxItem {
   annotation: LeadAnnotation;
 }
 
+// Run report contract
+
 export interface CommonIssueCount {
   issueType: AuditIssueType;
   count: number;
@@ -409,6 +421,8 @@ export interface ScoutRunReport {
   notes: string[];
   errorMessage?: string;
 }
+
+// Outreach contract
 
 export interface OutreachProfile {
   profileId: string;

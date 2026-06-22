@@ -226,6 +226,7 @@ function firstUsefulLine(values: Array<string | undefined | null>, fallback: str
   return values.find((value) => value?.trim())?.trim() ?? fallback;
 }
 
+/* Provider fallback boundary */
 function buildLocalTemplateDraft(
   target: ReturnType<typeof buildOutreachTargetContext>,
   strategy: ContactStrategyState,

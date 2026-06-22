@@ -33,6 +33,8 @@ import { applyScoutSchema, closeScoutSchemaClient } from "./lib/postgres.ts";
 
 loadWorkspaceEnv();
 
+/* Verification fixture boundary */
+
 const repository = createRunRepository();
 const createdAt = new Date();
 const runId = `verify-leads-${createdAt.toISOString().replace(/[:.]/g, "-")}`;
@@ -179,6 +181,8 @@ const report: ScoutRunReport = {
   notes: ["Lead workflow verification run."]
 };
 
+/* Cross-run fixture boundary */
+
 function buildSecondReport(): ScoutRunReport {
   const secondReport = structuredClone(report);
   const secondQuery = {
@@ -273,6 +277,8 @@ function buildSecondReport(): ScoutRunReport {
 
   return secondReport;
 }
+
+/* Lead workflow boundary */
 
 try {
   await applyScoutSchema();
@@ -462,6 +468,8 @@ try {
   assert.match(inboxMarkdownExport.body, /Follow up/);
   assert.match(inboxMarkdownExport.body, /Sample quality/);
 
+  /* Lead pack assertion boundary */
+
   const leadPackMarkdown = await buildLeadPackExport({
     runId,
     candidateId,
@@ -521,6 +529,8 @@ try {
 
   console.log("Lead workflow verification passed.");
 } finally {
+  /* Verification cleanup boundary */
+
   const sql = getPostgresClient();
   await sql`delete from scout_runs where run_id = ${runId} or run_id = ${secondRunId}`;
   if (manualRunId) {

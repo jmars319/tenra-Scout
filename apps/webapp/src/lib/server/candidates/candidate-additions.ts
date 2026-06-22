@@ -22,6 +22,8 @@ import {
 } from "../storage/persisted-run-record.ts";
 import { createRunRepository } from "../storage/run-repository.ts";
 
+/* Candidate mutation contract */
+
 export interface AddManualCandidateInput {
   runId: string;
   businessName: string;
@@ -83,6 +85,8 @@ function domainFromUrl(value: string | undefined): string | null {
     return null;
   }
 }
+
+/* Miss diagnostics boundary */
 
 function buildMissDiagnostics(
   report: ScoutRunReport,
@@ -180,6 +184,8 @@ function createCandidate(input: {
   };
 }
 
+/* Report rebuild boundary */
+
 function rebuildReport(
   report: ScoutRunReport,
   additions: {
@@ -262,6 +268,8 @@ function rebuildReport(
   };
 }
 
+/* Candidate audit boundary */
+
 async function auditNewCandidates(
   report: ScoutRunReport,
   candidates: SearchCandidate[]
@@ -306,6 +314,8 @@ async function auditNewCandidates(
     audits
   };
 }
+
+/* Mutation save boundary */
 
 function ensureCanMutate(record: PersistedRunRecord, report: ScoutRunReport | null): ScoutRunReport {
   if (record.status !== "completed" || !report) {
@@ -380,6 +390,8 @@ async function addCandidatesToRun(
 
   return saveMutatedReport(record, nextReport);
 }
+
+/* Public mutation boundary */
 
 export async function addManualCandidateToRun(
   input: AddManualCandidateInput

@@ -24,6 +24,8 @@ import { canonicalizeUrl } from "../apps/webapp/src/lib/server/search/canonicali
 import { buildQueryVariants } from "../apps/webapp/src/lib/server/search/query-variants.ts";
 
 async function main(): Promise<void> {
+  /* Query normalization boundary */
+
   const canonical = canonicalizeUrl(
     "https://www.example.com/services/index.html?utm_source=ddg&ref=ads#top"
   );
@@ -132,6 +134,8 @@ async function main(): Promise<void> {
     }),
     true
   );
+
+  /* Acquisition merge boundary */
 
   const liveResults: Record<
     string,
@@ -302,6 +306,8 @@ async function main(): Promise<void> {
       (candidate) => candidate.reason && candidate.title && candidate.url
     )
   );
+
+  /* Shortlist scoring boundary */
 
   const shortlistPresences = [
     createPresenceRecord(

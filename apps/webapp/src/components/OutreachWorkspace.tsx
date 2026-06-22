@@ -51,6 +51,8 @@ export function OutreachWorkspace({
     () => leads[0]?.candidateId ?? null
   );
 
+  /* Workspace state boundary */
+
   function updateEditor(
     candidateId: string,
     apply: (current: DraftEditorState) => DraftEditorState
@@ -74,6 +76,8 @@ export function OutreachWorkspace({
       [candidateId]: draftToEditor(draft, lead.reasons.slice(0, 4))
     }));
   }
+
+  /* Draft action boundary */
 
   async function handleAnalyze(candidateId: string) {
     const lead = leads.find((item) => item.candidateId === candidateId);
@@ -254,6 +258,8 @@ export function OutreachWorkspace({
     }
   }
 
+  /* Clipboard action boundary */
+
   async function handleCopyEmail(candidateId: string) {
     const editor = editors[candidateId];
     if (!editor?.subjectLine.trim() || !editor.body.trim()) {
@@ -341,6 +347,8 @@ export function OutreachWorkspace({
       </p>
     );
   }
+
+  /* Workspace layout boundary */
 
   return (
     <div className="outreach-stack">

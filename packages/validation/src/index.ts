@@ -241,6 +241,7 @@ export const leadInboxItemSchema = z.object({
   annotation: leadAnnotationSchema
 });
 
+// Report schema contract
 export const businessBreakdownSchema = z.object({
   candidateId: z.string(),
   businessName: z.string(),

@@ -18,6 +18,8 @@ import { z } from "zod";
 
 export type PersistedRunRecord = z.infer<typeof persistedRunRecordSchema>;
 
+/* Legacy schema contract */
+
 const legacyPersistedRunRecordSchemaV2 = z.object({
   schemaVersion: z.literal(2),
   runId: z.string(),
@@ -65,6 +67,8 @@ export interface PersistedRunRecordOptions {
   execution?: RunExecutionInput;
   persistence?: PersistenceMetadataInput;
 }
+
+/* Metadata normalization boundary */
 
 function createPersistenceMetadata(
   input: PersistenceMetadataInput = {}
@@ -138,6 +142,8 @@ function resolveSearchSource(record: PersistedRunRecord): string {
     ? `${record.acquisition.provider} + seeded_stub`
     : record.acquisition.provider;
 }
+
+/* Report normalization boundary */
 
 export function normalizePersistedIntent(
   intent: PersistedRunRecord["intent"]
@@ -219,6 +225,8 @@ function normalizeLegacyFinding(
     ...(finding.ruleId ? { ruleId: finding.ruleId } : {})
   };
 }
+
+/* Record creation boundary */
 
 export function createQueuedPersistedRunRecord(
   input: QueuedRunRecordInput
@@ -332,6 +340,8 @@ export function toScoutRunReport(record: PersistedRunRecord): ScoutRunReport | n
 
   return report;
 }
+
+/* Legacy upgrade boundary */
 
 function upgradeLegacyV2Record(
   value: z.infer<typeof legacyPersistedRunRecordSchemaV2>,

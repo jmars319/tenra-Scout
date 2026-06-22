@@ -13,6 +13,8 @@ import { getPostgresClient } from "./postgres-client.ts";
 
 const CANCELED_RUN_MESSAGE = "Run canceled by operator.";
 
+/* Persistence contract boundary */
+
 export interface RecentRunSummary {
   runId: string;
   status: PersistedRunRecord["status"];
@@ -34,6 +36,8 @@ export interface SavedMarketSummary {
   latestSampleQuality?: MarketSampleQuality;
 }
 
+
+/* Upsert mapping boundary */
 
 export function createPostgresRunRepository() {
   const sql = getPostgresClient();
@@ -229,6 +233,8 @@ export function createPostgresRunRepository() {
 
     upsertRecord,
 
+    /* Queue lifecycle boundary */
+
     async claimNextQueuedRun(workerId: string): Promise<PersistedRunRecord | null> {
       const [row] = await sql<ScoutRunRow[]>`
         with next_run as (
@@ -421,6 +427,8 @@ export function createPostgresRunRepository() {
       return row ? mapRowToRecord(row) : null;
     },
 
+    /* Run lookup boundary */
+
     async getRecord(runId: string): Promise<PersistedRunRecord | null> {
       const [row] = await sql<ScoutRunRow[]>`
         select
@@ -517,6 +525,8 @@ export function createPostgresRunRepository() {
       const record = await repository.getRecord(runId);
       return record ? toScoutRunReport(record) : null;
     },
+
+    /* Market summary boundary */
 
     async listRecent(limit = 6): Promise<RecentRunSummary[]> {
       const rows = await sql<

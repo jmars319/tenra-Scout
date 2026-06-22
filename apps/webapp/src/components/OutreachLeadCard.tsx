@@ -71,6 +71,8 @@ export function OutreachLeadCard({
     hasShortMessage ||
     hasPhoneTalkingPoints;
 
+  /* Outreach card layout */
+
   return (
             <li
               key={lead.candidateId}
@@ -206,6 +208,7 @@ export function OutreachLeadCard({
 
                   {busyMessage ? <div className="status-note neutral">{busyMessage}</div> : null}
 
+                  {/* Contact fit boundary */}
                   <div className="section-stack">
                     <div className="section-label">Contact Fit</div>
                     {editor.contactChannels.length > 0 ? (

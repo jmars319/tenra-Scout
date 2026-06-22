@@ -19,6 +19,8 @@ import {
 import type { MarketComparison } from "@/lib/server/market-comparison";
 import { describeSampleQuality, toneForSampleQuality } from "./sample-quality-copy";
 
+/* Market comparison boundary */
+
 export function MarketComparisonPanel({ marketComparison }: { marketComparison?: MarketComparison | null | undefined }) {
   if (!marketComparison) {
     return null;
@@ -195,6 +197,8 @@ export function MarketComparisonPanel({ marketComparison }: { marketComparison?:
     </Panel>
   );
 }
+
+/* Business breakdown boundary */
 
 export function BusinessBreakdownsPanel({
   candidatesById,

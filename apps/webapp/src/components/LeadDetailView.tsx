@@ -64,6 +64,8 @@ export function LeadDetailView({
   const hasDraft = Boolean(draft?.subjectLine.trim() || draft?.body.trim() || draft?.shortMessage?.trim());
   const completionChecklist = buildCompletionChecklist(item, draft);
 
+  /* Annotation workflow boundary */
+
   function updateAnnotation(apply: (annotation: LeadInboxItem["annotation"]) => LeadInboxItem["annotation"]) {
     setItem((current) => ({
       ...current,
@@ -110,6 +112,8 @@ export function LeadDetailView({
     setMessage({ text: "Saved", tone: "good" });
     setPendingKey(null);
   }
+
+  /* Outreach workflow boundary */
 
   async function refreshDraft(runId: string, candidateId: string) {
     const response = await fetch(`/api/runs/${encodeURIComponent(runId)}/outreach`, {
@@ -193,6 +197,8 @@ export function LeadDetailView({
       });
     }
   }
+
+  /* Handoff delivery boundary */
 
   async function deliverHandoff(
     target: HandoffTarget,
@@ -305,6 +311,8 @@ export function LeadDetailView({
     writeEndpointConfig(suiteEndpointPresets);
     setMessage({ text: "Suite handoff destination presets applied.", tone: "good" });
   }
+
+  /* Lead detail layout boundary */
 
   return (
     <div className="scout-shell">

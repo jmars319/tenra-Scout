@@ -23,6 +23,8 @@ import type {
   SearchProviderAdapter
 } from "./provider-types.ts";
 
+/* Search contract boundary */
+
 export interface SearchLimits {
   minCandidates: number;
   maxCandidates: number;
@@ -51,6 +53,8 @@ export interface VariantAccumulator {
   acceptedResultCount: number;
   sources: Set<string>;
 }
+
+/* Candidate filtering boundary */
 
 export function shouldQueryProviderVariant(
   provider: SearchProviderAdapter,
@@ -180,6 +184,8 @@ export function buildRawCandidate(
   };
 }
 
+/* Directory extraction boundary */
+
 export function isDirectorySnippetSource(candidate: RawAcquisitionCandidate): boolean {
   return (
     candidate.presenceHint === "directory_only" ||
@@ -253,6 +259,8 @@ export function buildDirectorySnippetCandidates(
 export function describeProviderSource(source: string): string {
   return source.replace(/_/g, " ");
 }
+
+/* Dedup scoring boundary */
 
 export function getPreferenceScore(candidate: RawAcquisitionCandidate): number {
   let score = candidate.acquisitionKind === "live" ? 100 : 0;
@@ -345,6 +353,8 @@ export function shouldDeferLowSignalCandidate(
   return selectedLowSignalCount >= lowSignalCap && remainingHigherValue;
 }
 
+/* Fallback diagnostics boundary */
+
 export function isProviderDegraded(outcome: AcquisitionAttemptOutcome): boolean {
   return outcome !== "success" && outcome !== "empty";
 }
@@ -391,6 +401,8 @@ export function toSearchCandidate(candidate: RawAcquisitionCandidate, rank: numb
       : {})
   };
 }
+
+/* Provider attempt boundary */
 
 export function ensureVariantAccumulator(
   variantStats: Map<string, VariantAccumulator>,

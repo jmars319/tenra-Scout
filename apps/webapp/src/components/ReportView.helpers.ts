@@ -10,6 +10,8 @@ import {
   toneForSampleQuality
 } from "./sample-quality-copy";
 
+/* Label presentation boundary */
+
 export function humanize(value: string): string {
   return value
     .split("_")
@@ -120,6 +122,8 @@ export function describeCandidateProvenance(value?: string): string {
   return "Live result";
 }
 
+/* Tone mapping boundary */
+
 export function toneForQuality(quality: string): "neutral" | "good" | "warn" | "danger" {
   if (quality === "strong") {
     return "good";
@@ -173,6 +177,8 @@ export function toneForSampleMetric(
       ? "neutral"
       : "warn";
 }
+
+/* Acquisition trust boundary */
 
 export function toneForAcquisitionTrust(report: ScoutRunReport): "neutral" | "good" | "warn" | "danger" {
   const degradedLiveAttempt = report.acquisition.providerAttempts.some(
@@ -277,6 +283,8 @@ export function buildSampleConfidenceReasons(report: ScoutRunReport): string[] {
     : [describeSampleQualityMeaning(report.acquisition.sampleQuality)];
 }
 
+/* Sample decision boundary */
+
 export function formatPercent(value: number): string {
   return `${Math.round(value * 100)}%`;
 }
@@ -363,6 +371,8 @@ export function buildSampleDecisionRows(report: ScoutRunReport): Array<{
   ];
 }
 
+/* Finding grouping boundary */
+
 export function groupFindings(findings: AuditFinding[]): Map<string, AuditFinding[]> {
   const grouped = new Map<string, AuditFinding[]>();
 
@@ -402,6 +412,8 @@ export function sortFindings(findings: AuditFinding[]): AuditFinding[] {
 export function buildListKey(prefix: string, index: number): string {
   return `${prefix}-${index}`;
 }
+
+/* Lead triage boundary */
 
 export function buildLeadTriageItems(
   report: ScoutRunReport,
